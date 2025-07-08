@@ -32,13 +32,13 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
 }) => {
   if (isGenerating) {
     return (
-      <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+      <Card className="border-0 bg-[var(--gradient-card)] backdrop-blur-xl shadow-[var(--shadow-card)]">
         <CardContent className="flex flex-col items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-orange-500 mb-6" />
-          <h3 className="text-xl font-semibold text-gray-600 mb-2">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mb-6" />
+          <h3 className="text-xl font-semibold text-foreground mb-2">
             Cooking up something special...
           </h3>
-          <p className="text-gray-500 text-center">
+          <p className="text-muted-foreground text-center">
             Our AI chef is crafting the perfect recipe for your ingredients
           </p>
         </CardContent>
@@ -47,14 +47,14 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   }
 
   return (
-    <Card className="shadow-lg border-0 bg-white/80 backdrop-blur animate-fade-in">
+    <Card className="border-0 bg-[var(--gradient-card)] backdrop-blur-xl shadow-[var(--shadow-card)] animate-fade-in">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-2xl font-bold text-gray-800 mb-2">
+            <CardTitle className="text-2xl font-bold text-foreground mb-2">
               {recipe.title}
             </CardTitle>
-            <div className="flex items-center gap-4 text-sm text-gray-600">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4" />
                 {recipe.cookTime}
@@ -70,7 +70,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
               variant="outline"
               size="sm"
               onClick={onImprove}
-              className="hover:bg-orange-50"
+              className="hover:bg-accent/60 border-border"
             >
               <Sparkles className="w-4 h-4 mr-1" />
               Improve
@@ -80,7 +80,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
               size="sm"
               onClick={onAddToFavorites}
               disabled={isFavorited}
-              className={isFavorited ? "bg-red-50 text-red-600" : "hover:bg-red-50"}
+              className={isFavorited ? "bg-destructive/10 text-destructive border-destructive/20" : "hover:bg-destructive/10 hover:text-destructive border-border"}
             >
               <Heart className={`w-4 h-4 mr-1 ${isFavorited ? "fill-current" : ""}`} />
               {isFavorited ? "Favorited" : "Favorite"}
@@ -92,13 +92,13 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
       <CardContent className="space-y-6">
         {/* Ingredients */}
         <div>
-          <h3 className="font-semibold text-gray-800 mb-3">Ingredients</h3>
+          <h3 className="font-semibold text-foreground mb-3">Ingredients</h3>
           <div className="flex flex-wrap gap-2">
             {recipe.ingredients.map((ingredient, index) => (
               <Badge 
                 key={index} 
                 variant="secondary" 
-                className="bg-green-100 text-green-800 hover:bg-green-200"
+                className="bg-secondary/80 text-secondary-foreground hover:bg-secondary transition-colors"
               >
                 {ingredient}
               </Badge>
@@ -106,18 +106,18 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
           </div>
         </div>
 
-        <Separator />
+        <Separator className="bg-border" />
 
         {/* Instructions */}
         <div>
-          <h3 className="font-semibold text-gray-800 mb-4">Instructions</h3>
+          <h3 className="font-semibold text-foreground mb-4">Instructions</h3>
           <div className="space-y-3">
             {recipe.instructions.map((instruction, index) => (
               <div key={index} className="flex gap-3">
-                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-semibold rounded-full flex items-center justify-center">
+                <div className="flex-shrink-0 w-6 h-6 bg-[var(--gradient-button)] text-primary-foreground text-sm font-semibold rounded-full flex items-center justify-center shadow-sm">
                   {index + 1}
                 </div>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-foreground leading-relaxed">
                   {instruction}
                 </p>
               </div>

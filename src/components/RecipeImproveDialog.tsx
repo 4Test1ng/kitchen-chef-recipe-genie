@@ -53,7 +53,9 @@ export const RecipeImproveDialog: React.FC<RecipeImproveDialogProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-orange-500" />
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Sparkles className="w-5 h-5 text-primary" />
+            </div>
             Improve Your Recipe
           </DialogTitle>
           <DialogDescription>
@@ -70,14 +72,14 @@ export const RecipeImproveDialog: React.FC<RecipeImproveDialogProps> = ({
           />
           
           <div>
-            <p className="text-sm text-gray-600 mb-2">Quick suggestions:</p>
+            <p className="text-sm text-muted-foreground mb-2">Quick suggestions:</p>
             <div className="flex flex-wrap gap-2">
               {suggestionChips.map((suggestion) => (
                 <Button
                   key={suggestion}
                   variant="outline"
                   size="sm"
-                  className="text-xs h-7 px-2"
+                  className="text-xs h-7 px-2 border-border hover:bg-accent/60"
                   onClick={() => setFeedback(suggestion)}
                 >
                   {suggestion}
@@ -91,13 +93,14 @@ export const RecipeImproveDialog: React.FC<RecipeImproveDialogProps> = ({
           <Button
             variant="outline"
             onClick={handleClose}
+            className="border-border"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={!feedback.trim()}
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+            className="bg-[var(--gradient-button)] hover:shadow-[var(--shadow-glow)] transition-all duration-300"
           >
             <Sparkles className="w-4 h-4 mr-1" />
             Improve Recipe

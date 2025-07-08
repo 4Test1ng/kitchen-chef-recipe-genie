@@ -30,10 +30,12 @@ export const FavoritesPanel: React.FC<FavoritesPanelProps> = ({
   }
 
   return (
-    <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+    <Card className="border-0 bg-[var(--gradient-card)] backdrop-blur-xl shadow-[var(--shadow-card)]">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2">
-          <Heart className="w-5 h-5 text-red-500 fill-current" />
+          <div className="p-2 rounded-lg bg-destructive/10">
+            <Heart className="w-5 h-5 text-destructive fill-current" />
+          </div>
           Favorites ({favorites.length})
         </CardTitle>
       </CardHeader>
@@ -43,11 +45,11 @@ export const FavoritesPanel: React.FC<FavoritesPanelProps> = ({
             {favorites.map((recipe) => (
               <div 
                 key={recipe.id}
-                className="p-3 border rounded-lg hover:bg-gray-50 transition-colors group"
+                className="p-3 border border-border rounded-lg hover:bg-muted/60 transition-colors group"
               >
                 <div className="flex items-start justify-between mb-2">
                   <h4 
-                    className="font-medium text-sm text-gray-800 leading-tight cursor-pointer hover:text-orange-600 transition-colors"
+                    className="font-medium text-sm text-foreground leading-tight cursor-pointer hover:text-primary transition-colors"
                     onClick={() => onSelectFavorite(recipe)}
                   >
                     {recipe.title}
@@ -55,13 +57,13 @@ export const FavoritesPanel: React.FC<FavoritesPanelProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 text-gray-400 hover:text-red-500"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
                     onClick={() => onRemoveFavorite(recipe.id)}
                   >
                     <Trash2 className="w-3 h-3" />
                   </Button>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Clock className="w-3 h-3" />
                   {recipe.cookTime}
                   <span>•</span>

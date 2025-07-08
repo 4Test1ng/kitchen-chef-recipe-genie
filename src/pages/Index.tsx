@@ -203,17 +203,19 @@ const KitchenChef = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <ChefHat className="w-8 h-8 text-orange-500" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-green-600 bg-clip-text text-transparent">
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="p-3 rounded-2xl bg-primary/10 shadow-soft">
+              <ChefHat className="w-8 h-8 text-primary" />
+            </div>
+            <h1 className="text-5xl font-bold bg-[var(--gradient-hero)] bg-clip-text text-transparent">
               KitchenChef
             </h1>
           </div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Transform your ingredients into delicious recipes with the power of AI
           </p>
         </div>
@@ -222,10 +224,12 @@ const KitchenChef = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             {/* Recipe Generator Form */}
-            <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+            <Card className="border-0 bg-[var(--gradient-card)] backdrop-blur-xl shadow-[var(--shadow-card)]">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-orange-500" />
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                  </div>
                   Generate Recipe
                 </CardTitle>
               </CardHeader>
@@ -234,16 +238,16 @@ const KitchenChef = () => {
                   placeholder="Enter your ingredients separated by commas (e.g., chicken, rice, tomatoes, onions)"
                   value={ingredients}
                   onChange={(e) => setIngredients(e.target.value)}
-                  className="min-h-[120px] resize-none"
+                  className="min-h-[120px] resize-none border-border bg-card"
                 />
                 <Button 
                   onClick={handleGenerateRecipe}
                   disabled={isGenerating}
-                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+                  className="w-full bg-[var(--gradient-button)] hover:shadow-[var(--shadow-glow)] transition-all duration-300"
                 >
                   {isGenerating ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2" />
                       Generating...
                     </>
                   ) : (
@@ -258,10 +262,12 @@ const KitchenChef = () => {
 
             {/* Ingredient History */}
             {ingredientHistory.length > 0 && (
-              <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+              <Card className="border-0 bg-[var(--gradient-card)] backdrop-blur-xl shadow-[var(--shadow-card)]">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2">
-                    <History className="w-5 h-5 text-green-500" />
+                    <div className="p-2 rounded-lg bg-secondary/30">
+                      <History className="w-5 h-5 text-secondary-foreground" />
+                    </div>
                     Recent Searches
                   </CardTitle>
                 </CardHeader>
@@ -272,10 +278,10 @@ const KitchenChef = () => {
                         <Button
                           key={index}
                           variant="ghost"
-                          className="w-full justify-start text-left p-3 h-auto"
+                          className="w-full justify-start text-left p-3 h-auto hover:bg-muted/60 transition-colors"
                           onClick={() => handleHistoryClick(item)}
                         >
-                          <div className="truncate text-sm text-gray-600">
+                          <div className="truncate text-sm text-muted-foreground">
                             {item}
                           </div>
                         </Button>
@@ -305,13 +311,15 @@ const KitchenChef = () => {
                 isFavorited={favorites.some(fav => fav.title === currentRecipe.title)}
               />
             ) : (
-              <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
+              <Card className="border-0 bg-[var(--gradient-card)] backdrop-blur-xl shadow-[var(--shadow-card)]">
                 <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-                  <ChefHat className="w-16 h-16 text-gray-300 mb-6" />
-                  <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                  <div className="p-4 rounded-2xl bg-muted/50 mb-6">
+                    <ChefHat className="w-16 h-16 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-foreground mb-3">
                     Ready to Cook Something Amazing?
                   </h3>
-                  <p className="text-gray-500 max-w-md">
+                  <p className="text-muted-foreground max-w-md leading-relaxed">
                     Enter your available ingredients in the sidebar and let our AI chef create a perfect recipe just for you.
                   </p>
                 </CardContent>
