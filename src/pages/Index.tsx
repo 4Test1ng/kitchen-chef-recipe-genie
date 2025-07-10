@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChefHat, Clock, Heart, History, Sparkles, Plus, TrendingUp, Users, Star, BookOpen } from 'lucide-react';
+import { ChefHat, Clock, Heart, History, Sparkles, Plus, TrendingUp, Users, Star, BookOpen, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { RecipeCard } from '@/components/RecipeCard';
 import { RecipeImproveDialog } from '@/components/RecipeImproveDialog';
@@ -221,6 +221,16 @@ const KitchenChef = () => {
     setIngredients(historicalIngredients);
   };
 
+  const handleRemoveFromHistory = (indexToRemove: number) => {
+    const newHistory = ingredientHistory.filter((_, index) => index !== indexToRemove);
+    saveIngredientHistory(newHistory);
+    
+    toast({
+      title: "Removed from history",
+      description: "Ingredient search removed from your recent searches.",
+    });
+  };
+
   return (
     <div className="min-h-screen gradient-bg">
       <div className="container mx-auto px-4 py-8">
@@ -230,8 +240,8 @@ const KitchenChef = () => {
             <div className="p-4 rounded-3xl bg-primary/10 backdrop-blur-sm animate-bounce-gentle">
               <ChefHat className="w-10 h-10 text-primary" />
             </div>
-            <div>
-              <h1 className="text-6xl font-bold gradient-primary bg-clip-text text-transparent">
+            <div className="p-4 rounded-2xl bg-primary/5 backdrop-blur-sm">
+              <h1 className="text-6xl font-bold text-white">
                 KitchenChef
               </h1>
               <p className="text-sm text-primary/70 font-medium mt-1">AI-Powered Recipe Generator</p>
@@ -264,10 +274,10 @@ const KitchenChef = () => {
           />
           <StatCard
             title="Success Rate"
-            value="98%"
+            value={totalRecipesGenerated > 0 ? Math.min(95 + (favorites.length / totalRecipesGenerated) * 5, 100).toFixed(0) + "%" : "100%"}
             icon={TrendingUp}
             description="Recipe satisfaction"
-            trend={{ value: 5, isPositive: true }}
+            trend={{ value: favorites.length > 0 ? Math.round((favorites.length / Math.max(totalRecipesGenerated, 1)) * 10) : 5, isPositive: true }}
           />
         </div>
 
@@ -352,16 +362,31 @@ const KitchenChef = () => {
                   <ScrollArea className="h-[200px]">
                     <div className="space-y-2">
                       {ingredientHistory.map((item, index) => (
-                        <Button
+                        <div
                           key={index}
-                          variant="ghost"
-                          className="w-full justify-start text-left p-3 h-auto hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-all duration-200 rounded-lg"
-                          onClick={() => handleHistoryClick(item)}
+                          className="flex items-center gap-2 p-3 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-all duration-200 rounded-lg group"
                         >
-                          <div className="truncate text-sm text-foreground">
-                            {item}
-                          </div>
-                        </Button>
+                          <Button
+                            variant="ghost"
+                            className="flex-1 justify-start text-left h-auto p-0"
+                            onClick={() => handleHistoryClick(item)}
+                          >
+                            <div className="truncate text-sm text-foreground">
+                              {item}
+                            </div>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveFromHistory(index);
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
                       ))}
                     </div>
                   </ScrollArea>
