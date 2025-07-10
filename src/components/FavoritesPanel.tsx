@@ -30,13 +30,16 @@ export const FavoritesPanel: React.FC<FavoritesPanelProps> = ({
   }
 
   return (
-    <Card className="border-0 bg-[var(--gradient-card)] backdrop-blur-xl shadow-[var(--shadow-card)]">
+    <Card className="glass-card">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-destructive/10">
-            <Heart className="w-5 h-5 text-destructive fill-current" />
+        <CardTitle className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-success/10">
+            <Heart className="w-5 h-5 text-success fill-current" />
           </div>
-          Favorites ({favorites.length})
+          <div>
+            <span className="text-base">Saved Recipes</span>
+            <p className="text-xs text-muted-foreground font-normal">{favorites.length} favorites</p>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -45,11 +48,11 @@ export const FavoritesPanel: React.FC<FavoritesPanelProps> = ({
             {favorites.map((recipe) => (
               <div 
                 key={recipe.id}
-                className="p-3 border border-border rounded-lg hover:bg-muted/60 transition-colors group"
+                className="group p-4 bg-card/30 border border-border/30 rounded-xl hover:bg-card/50 hover:border-border/50 transition-all duration-200 hover-lift"
               >
-                <div className="flex items-start justify-between mb-2">
+                <div className="flex items-start justify-between mb-3">
                   <h4 
-                    className="font-medium text-sm text-foreground leading-tight cursor-pointer hover:text-primary transition-colors"
+                    className="font-semibold text-sm text-foreground leading-tight cursor-pointer hover:text-primary transition-colors line-clamp-2"
                     onClick={() => onSelectFavorite(recipe)}
                   >
                     {recipe.title}
@@ -57,17 +60,21 @@ export const FavoritesPanel: React.FC<FavoritesPanelProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md"
                     onClick={() => onRemoveFavorite(recipe.id)}
                   >
-                    <Trash2 className="w-3 h-3" />
+                    <Trash2 className="w-3.5 h-3.5" />
                   </Button>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Clock className="w-3 h-3" />
-                  {recipe.cookTime}
-                  <span>•</span>
-                  <span>{recipe.instructions.length} steps</span>
+                <div className="flex items-center gap-3 text-xs">
+                  <div className="flex items-center gap-1 text-primary">
+                    <Clock className="w-3 h-3" />
+                    <span className="font-medium">{recipe.cookTime}</span>
+                  </div>
+                  <div className="w-1 h-1 bg-border rounded-full"></div>
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <span className="font-medium">{recipe.instructions.length} steps</span>
+                  </div>
                 </div>
               </div>
             ))}

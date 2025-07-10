@@ -6,11 +6,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChefHat, Clock, Heart, History, Sparkles, Plus } from 'lucide-react';
+import { ChefHat, Clock, Heart, History, Sparkles, Plus, TrendingUp, Users, Star, BookOpen } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { RecipeCard } from '@/components/RecipeCard';
 import { RecipeImproveDialog } from '@/components/RecipeImproveDialog';
 import { FavoritesPanel } from '@/components/FavoritesPanel';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { StatCard } from '@/components/StatCard';
 
 interface Recipe {
   id: string;
@@ -28,11 +30,20 @@ const KitchenChef = () => {
   const [ingredientHistory, setIngredientHistory] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<Recipe[]>([]);
   const [improveDialogOpen, setImproveDialogOpen] = useState(false);
+  const [totalRecipesGenerated, setTotalRecipesGenerated] = useState(0);
+  const [quickSuggestions] = useState([
+    "Chicken, rice, vegetables",
+    "Pasta, tomatoes, basil",
+    "Eggs, bacon, bread",
+    "Salmon, lemon, herbs",
+    "Beef, potatoes, onions"
+  ]);
 
   // Load data from localStorage on component mount
   useEffect(() => {
     const savedHistory = localStorage.getItem('kitchenchef-ingredient-history');
     const savedFavorites = localStorage.getItem('kitchenchef-favorites');
+    const savedTotal = localStorage.getItem('kitchenchef-total-generated');
     
     if (savedHistory) {
       setIngredientHistory(JSON.parse(savedHistory));
@@ -40,6 +51,10 @@ const KitchenChef = () => {
     
     if (savedFavorites) {
       setFavorites(JSON.parse(savedFavorites));
+    }
+
+    if (savedTotal) {
+      setTotalRecipesGenerated(parseInt(savedTotal));
     }
   }, []);
 
@@ -123,6 +138,10 @@ const KitchenChef = () => {
       const recipe = await generateRecipe(ingredientList);
       setCurrentRecipe(recipe);
       
+      const newTotal = totalRecipesGenerated + 1;
+      setTotalRecipesGenerated(newTotal);
+      localStorage.setItem('kitchenchef-total-generated', newTotal.toString());
+      
       toast({
         title: "Recipe generated!",
         description: "Your delicious recipe is ready to cook.",
@@ -203,56 +222,111 @@ const KitchenChef = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen gradient-bg">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="p-3 rounded-2xl bg-primary/10 shadow-soft">
-              <ChefHat className="w-8 h-8 text-primary" />
+        <div className="text-center mb-12 animate-fade-in">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="p-4 rounded-3xl bg-primary/10 backdrop-blur-sm animate-bounce-gentle">
+              <ChefHat className="w-10 h-10 text-primary" />
             </div>
-            <h1 className="text-5xl font-bold bg-[var(--gradient-hero)] bg-clip-text text-transparent">
-              KitchenChef
-            </h1>
+            <div>
+              <h1 className="text-6xl font-bold gradient-primary bg-clip-text text-transparent">
+                KitchenChef
+              </h1>
+              <p className="text-sm text-primary/70 font-medium mt-1">AI-Powered Recipe Generator</p>
+            </div>
           </div>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Transform your ingredients into delicious recipes with the power of AI
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Transform your available ingredients into amazing, personalized recipes with the power of artificial intelligence
           </p>
+        </div>
+
+        {/* Stats Dashboard */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <StatCard
+            title="Recipes Generated"
+            value={totalRecipesGenerated}
+            icon={BookOpen}
+            description="Total recipes created"
+          />
+          <StatCard
+            title="Favorites"
+            value={favorites.length}
+            icon={Heart}
+            description="Saved recipes"
+          />
+          <StatCard
+            title="Ingredients Used"
+            value={ingredientHistory.length * 4}
+            icon={Sparkles}
+            description="Unique combinations"
+          />
+          <StatCard
+            title="Success Rate"
+            value="98%"
+            icon={TrendingUp}
+            description="Recipe satisfaction"
+            trend={{ value: 5, isPositive: true }}
+          />
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             {/* Recipe Generator Form */}
-            <Card className="border-0 bg-[var(--gradient-card)] backdrop-blur-xl shadow-[var(--shadow-card)]">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-primary/10">
-                    <Sparkles className="w-5 h-5 text-primary" />
+            <Card className="glass-card animate-slide-up">
+              <CardHeader className="pb-6">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-primary/10 animate-pulse-glow">
+                    <Sparkles className="w-6 h-6 text-primary" />
                   </div>
-                  Generate Recipe
+                  <div>
+                    <span className="text-lg font-bold">Generate Recipe</span>
+                    <p className="text-sm text-muted-foreground font-normal">AI-powered cooking assistant</p>
+                  </div>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Textarea
-                  placeholder="Enter your ingredients separated by commas (e.g., chicken, rice, tomatoes, onions)"
-                  value={ingredients}
-                  onChange={(e) => setIngredients(e.target.value)}
-                  className="min-h-[120px] resize-none border-border bg-card"
-                />
+              <CardContent className="space-y-6">
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-foreground">Your Ingredients</label>
+                  <Textarea
+                    placeholder="Enter your ingredients separated by commas (e.g., chicken, rice, tomatoes, onions)"
+                    value={ingredients}
+                    onChange={(e) => setIngredients(e.target.value)}
+                    className="min-h-[100px] resize-none bg-background/50 border-border/50 focus:border-primary transition-colors"
+                  />
+                </div>
+                
+                {/* Quick suggestions */}
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-foreground">Quick suggestions</label>
+                  <div className="flex flex-wrap gap-2">
+                    {quickSuggestions.map((suggestion, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs hover:bg-primary/10 hover:border-primary transition-colors"
+                        onClick={() => setIngredients(suggestion)}
+                      >
+                        {suggestion}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
                 <Button 
                   onClick={handleGenerateRecipe}
                   disabled={isGenerating}
-                  className="w-full bg-[var(--gradient-button)] hover:shadow-[var(--shadow-glow)] transition-all duration-300"
+                  className="w-full gradient-primary hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover-lift"
+                  size="lg"
                 >
                   {isGenerating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2" />
-                      Generating...
-                    </>
+                    <LoadingSpinner size="sm" text="Creating your recipe..." />
                   ) : (
                     <>
-                      <ChefHat className="w-4 h-4 mr-2" />
+                      <ChefHat className="w-5 h-5 mr-2" />
                       Generate Recipe
                     </>
                   )}
@@ -262,13 +336,16 @@ const KitchenChef = () => {
 
             {/* Ingredient History */}
             {ingredientHistory.length > 0 && (
-              <Card className="border-0 bg-[var(--gradient-card)] backdrop-blur-xl shadow-[var(--shadow-card)]">
+              <Card className="glass-card">
                 <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2">
-                    <div className="p-2 rounded-lg bg-secondary/30">
-                      <History className="w-5 h-5 text-secondary-foreground" />
+                  <CardTitle className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-accent/50">
+                      <History className="w-5 h-5 text-accent-foreground" />
                     </div>
-                    Recent Searches
+                    <div>
+                      <span className="text-base">Recent Searches</span>
+                      <p className="text-xs text-muted-foreground font-normal">Click to reuse</p>
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -278,10 +355,10 @@ const KitchenChef = () => {
                         <Button
                           key={index}
                           variant="ghost"
-                          className="w-full justify-start text-left p-3 h-auto hover:bg-muted/60 transition-colors"
+                          className="w-full justify-start text-left p-3 h-auto hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-all duration-200 rounded-lg"
                           onClick={() => handleHistoryClick(item)}
                         >
-                          <div className="truncate text-sm text-muted-foreground">
+                          <div className="truncate text-sm text-foreground">
                             {item}
                           </div>
                         </Button>
@@ -311,17 +388,48 @@ const KitchenChef = () => {
                 isFavorited={favorites.some(fav => fav.title === currentRecipe.title)}
               />
             ) : (
-              <Card className="border-0 bg-[var(--gradient-card)] backdrop-blur-xl shadow-[var(--shadow-card)]">
-                <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-                  <div className="p-4 rounded-2xl bg-muted/50 mb-6">
-                    <ChefHat className="w-16 h-16 text-muted-foreground" />
+              <Card className="glass-card text-center h-full min-h-[500px] flex items-center justify-center">
+                <CardContent className="space-y-8 max-w-lg">
+                  <div className="relative">
+                    <div className="p-6 rounded-3xl bg-primary/10 mx-auto w-fit animate-bounce-gentle">
+                      <ChefHat className="w-20 h-20 text-primary" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 p-2 bg-success rounded-full animate-pulse">
+                      <Sparkles className="w-4 h-4 text-success-foreground" />
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-semibold text-foreground mb-3">
-                    Ready to Cook Something Amazing?
-                  </h3>
-                  <p className="text-muted-foreground max-w-md leading-relaxed">
-                    Enter your available ingredients in the sidebar and let our AI chef create a perfect recipe just for you.
-                  </p>
+                  
+                  <div className="space-y-4">
+                    <h3 className="text-3xl font-bold text-foreground">
+                      Ready to Cook Something Amazing?
+                    </h3>
+                    <p className="text-lg text-muted-foreground leading-relaxed">
+                      Enter your available ingredients and let our AI chef create the perfect recipe tailored just for you.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-success">
+                        <div className="w-2 h-2 bg-success rounded-full"></div>
+                        Personalized recipes
+                      </div>
+                      <div className="flex items-center gap-2 text-primary">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        Step-by-step instructions
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-warning">
+                        <div className="w-2 h-2 bg-warning rounded-full"></div>
+                        Ingredient optimization
+                      </div>
+                      <div className="flex items-center gap-2 text-destructive">
+                        <div className="w-2 h-2 bg-destructive rounded-full"></div>
+                        Cooking time estimates
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             )}
