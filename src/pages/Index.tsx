@@ -14,14 +14,7 @@ import { FavoritesPanel } from '@/components/FavoritesPanel';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { StatCard } from '@/components/StatCard';
 
-interface Recipe {
-  id: string;
-  title: string;
-  cookTime: string;
-  instructions: string[];
-  ingredients: string[];
-  createdAt: Date;
-}
+import { Recipe, IngredientWithTiming } from '@/types/recipe';
 
 const KitchenChef = () => {
   const [ingredients, setIngredients] = useState('');
@@ -70,10 +63,10 @@ const KitchenChef = () => {
     setFavorites(newFavorites);
   };
 
-  // AI recipe generation with strict ingredient constraint
+  // Enhanced AI recipe generation with ingredient timing and nutritional info
   const generateRecipe = async (ingredientList: string[]): Promise<Recipe> => {
     try {
-      const prompt = `Create a recipe using ONLY the following ingredients: ${ingredientList.join(', ')}.
+      const prompt = `Create a detailed recipe using ONLY the following ingredients: ${ingredientList.join(', ')}.
 
 STRICT REQUIREMENTS:
 - You MUST use ONLY the ingredients provided in the list above
@@ -81,14 +74,22 @@ STRICT REQUIREMENTS:
 - Do NOT mention ingredients that are not provided
 - Create a practical recipe that can be made with just these ingredients
 - Assume basic seasonings like salt and pepper are available
-- Provide step-by-step cooking instructions
-- Estimate cooking time
+- Provide specific cooking times and methods for each ingredient
+- Include difficulty level, servings, and nutritional estimates
+- Add relevant cooking tags
 
 Format your response as JSON:
 {
   "title": "Recipe Name",
   "cookTime": "X minutes",
-  "instructions": ["step 1", "step 2", ...]
+  "difficulty": "Easy|Medium|Hard",
+  "servings": 2-4,
+  "instructions": ["step 1", "step 2", ...],
+  "ingredientsWithTiming": [
+    {"name": "ingredient", "cookingTime": "X minutes", "cookingMethod": "sauté/boil/bake/etc"}
+  ],
+  "nutrition": {"calories": 400, "protein": "25g", "carbs": "30g", "fat": "15g"},
+  "tags": ["quick", "healthy", "comfort food", etc]
 }`;
 
       // For now, we'll use a deterministic approach based on ingredients
@@ -108,7 +109,7 @@ Format your response as JSON:
     }
   };
 
-  // Fallback recipe generator that strictly uses only provided ingredients
+  // Enhanced fallback recipe generator with detailed timing and nutrition
   const generateFallbackRecipe = (ingredientList: string[]): Recipe => {
     const hasProtein = ingredientList.some(ing => 
       ['chicken', 'beef', 'pork', 'fish', 'salmon', 'turkey', 'egg'].some(protein => 
@@ -122,25 +123,81 @@ Format your response as JSON:
       )
     );
 
+    const hasVegetables = ingredientList.some(ing => 
+      ['tomato', 'onion', 'pepper', 'carrot', 'broccoli', 'spinach', 'mushroom'].some(veg => 
+        ing.toLowerCase().includes(veg)
+      )
+    );
+
     const title = hasProtein && hasCarbs 
       ? `${ingredientList[0]} Bowl with ${ingredientList.slice(1, 3).join(' and ')}`
       : `Simple ${ingredientList.slice(0, 2).join(' and ')} Dish`;
 
+    // Generate ingredient timing based on common cooking methods
+    const ingredientsWithTiming: IngredientWithTiming[] = ingredientList.map(ingredient => {
+      const lowerIng = ingredient.toLowerCase();
+      
+      if (['chicken', 'beef', 'pork'].some(meat => lowerIng.includes(meat))) {
+        return { name: ingredient, cookingTime: "12-15 minutes", cookingMethod: "pan-fry until golden" };
+      } else if (['fish', 'salmon'].some(fish => lowerIng.includes(fish))) {
+        return { name: ingredient, cookingTime: "8-10 minutes", cookingMethod: "pan-sear or bake" };
+      } else if (lowerIng.includes('egg')) {
+        return { name: ingredient, cookingTime: "3-5 minutes", cookingMethod: "scramble or fry" };
+      } else if (['rice'].some(grain => lowerIng.includes(grain))) {
+        return { name: ingredient, cookingTime: "18-20 minutes", cookingMethod: "simmer covered" };
+      } else if (['pasta', 'noodle'].some(pasta => lowerIng.includes(pasta))) {
+        return { name: ingredient, cookingTime: "8-12 minutes", cookingMethod: "boil in salted water" };
+      } else if (['potato'].some(starch => lowerIng.includes(starch))) {
+        return { name: ingredient, cookingTime: "15-20 minutes", cookingMethod: "roast or boil" };
+      } else if (['onion'].some(veg => lowerIng.includes(veg))) {
+        return { name: ingredient, cookingTime: "5-7 minutes", cookingMethod: "sauté until translucent" };
+      } else if (['tomato'].some(veg => lowerIng.includes(veg))) {
+        return { name: ingredient, cookingTime: "3-5 minutes", cookingMethod: "sauté until softened" };
+      } else {
+        return { name: ingredient, cookingTime: "5-8 minutes", cookingMethod: "sauté or steam" };
+      }
+    });
+
     const instructions = [
-      `Prepare all your ingredients: ${ingredientList.join(', ')}`,
-      hasCarbs ? "Cook any grains or starches according to package directions" : "Begin by preparing your main ingredients",
-      hasProtein ? "Cook protein ingredients until fully cooked and safe to eat" : "Heat your main ingredients in a pan",
-      "Combine all ingredients in a serving dish",
-      "Season with salt and pepper to taste",
-      "Serve hot and enjoy your custom recipe!"
+      "Gather and prepare all ingredients according to their specific timing requirements",
+      "Start with the longest cooking items first (grains, starches, proteins)",
+      hasCarbs ? `Cook ${ingredientList.find(ing => ['rice', 'pasta', 'potato'].some(carb => ing.toLowerCase().includes(carb))) || 'grains'} according to timing above` : "Begin by preparing your main ingredients",
+      hasProtein ? `Cook protein ingredients as specified in timing - ensure fully cooked and safe to eat` : "Heat your main ingredients in a pan",
+      hasVegetables ? "Add vegetables according to their cooking times, starting with harder vegetables first" : "Add remaining ingredients",
+      "Combine all cooked ingredients in a serving dish, maintaining their textures",
+      "Season with salt and pepper to taste, adjust flavors as needed",
+      "Serve hot and enjoy your custom recipe with perfectly timed ingredients!"
+    ];
+
+    const difficulty = hasProtein && hasCarbs && hasVegetables ? 'Medium' : 'Easy';
+    const servings = Math.min(Math.max(Math.ceil(ingredientList.length / 2), 2), 4);
+    
+    // Estimate nutrition based on ingredients
+    const estimatedCalories = ingredientList.length * 80 + (hasProtein ? 150 : 0) + (hasCarbs ? 100 : 0);
+    const tags = [
+      difficulty.toLowerCase(),
+      hasProtein ? 'protein-rich' : 'vegetarian',
+      hasVegetables ? 'nutritious' : 'simple',
+      'homemade',
+      ingredientList.length <= 4 ? 'minimal-ingredients' : 'diverse'
     ];
 
     return {
       id: Date.now().toString(),
       title,
       cookTime: "20-25 minutes",
+      difficulty,
+      servings,
       instructions,
       ingredients: ingredientList,
+      ingredientsWithTiming,
+      nutrition: {
+        calories: estimatedCalories,
+        protein: hasProtein ? "25-30g" : "8-12g",
+        carbs: hasCarbs ? "35-45g" : "15-25g",
+        fat: "10-15g"
+      },
+      tags,
       createdAt: new Date()
     };
   };

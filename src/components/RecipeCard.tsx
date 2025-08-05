@@ -4,16 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Clock, Heart, Sparkles, ChefHat } from 'lucide-react';
+import { Clock, Heart, Sparkles, ChefHat, Users, Target, Timer, ShoppingCart } from 'lucide-react';
+import { ShoppingListDialog } from './ShoppingListDialog';
+import { RecipeScaler } from './RecipeScaler';
 
-interface Recipe {
-  id: string;
-  title: string;
-  cookTime: string;
-  instructions: string[];
-  ingredients: string[];
-  createdAt: Date;
-}
+import { Recipe } from '@/types/recipe';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -23,13 +18,15 @@ interface RecipeCardProps {
   isFavorited: boolean;
 }
 
-export const RecipeCard: React.FC<RecipeCardProps> = ({
+const RecipeCardComponent: React.FC<RecipeCardProps> = ({
   recipe,
   isGenerating,
   onImprove,
   onAddToFavorites,
   isFavorited
 }) => {
+  const [scaledServings, setScaledServings] = React.useState(recipe.servings || 2);
+
   if (isGenerating) {
     return (
       <Card className="glass-card min-h-[500px] flex items-center justify-center">
@@ -74,7 +71,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
                 <p className="text-sm text-muted-foreground">Generated with AI precision</p>
               </div>
             </div>
-            <div className="flex items-center gap-6 text-sm">
+            <div className="flex flex-wrap items-center gap-3 text-sm">
               <div className="flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-full">
                 <Clock className="w-4 h-4 text-primary" />
                 <span className="font-medium">{recipe.cookTime}</span>
@@ -83,6 +80,18 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
                 <ChefHat className="w-4 h-4 text-accent-foreground" />
                 <span className="font-medium">{recipe.instructions.length} steps</span>
               </div>
+              {recipe.difficulty && (
+                <div className="flex items-center gap-2 bg-success/10 px-3 py-1.5 rounded-full">
+                  <Target className="w-4 h-4 text-success" />
+                  <span className="font-medium">{recipe.difficulty}</span>
+                </div>
+              )}
+              {recipe.servings && (
+                <div className="flex items-center gap-2 bg-warning/10 px-3 py-1.5 rounded-full">
+                  <Users className="w-4 h-4 text-warning" />
+                  <span className="font-medium">{recipe.servings} servings</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -108,30 +117,93 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
               <Heart className={`w-4 h-4 mr-2 ${isFavorited ? "fill-current" : ""}`} />
               {isFavorited ? "Saved" : "Save"}
             </Button>
+            <ShoppingListDialog 
+              recipe={recipe} 
+              scalingFactor={scaledServings / (recipe.servings || 2)} 
+            />
           </div>
         </div>
       </CardHeader>
       
       <CardContent className="space-y-8 pt-6">
-        {/* Ingredients */}
+        {/* Recipe Scaler */}
+        {recipe.servings && (
+          <RecipeScaler
+            originalServings={recipe.servings}
+            onServingsChange={setScaledServings}
+          />
+        )}
+        {/* Recipe Tags */}
+        {recipe.tags && recipe.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {recipe.tags.map((tag, index) => (
+              <Badge key={index} variant="outline" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {/* Nutrition Info */}
+        {recipe.nutrition && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted/30 rounded-lg">
+            <div className="text-center">
+              <div className="text-lg font-bold text-primary">{recipe.nutrition.calories}</div>
+              <div className="text-xs text-muted-foreground">Calories</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-success">{recipe.nutrition.protein}</div>
+              <div className="text-xs text-muted-foreground">Protein</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-warning">{recipe.nutrition.carbs}</div>
+              <div className="text-xs text-muted-foreground">Carbs</div>
+            </div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-accent">{recipe.nutrition.fat}</div>
+              <div className="text-xs text-muted-foreground">Fat</div>
+            </div>
+          </div>
+        )}
+
+        {/* Ingredients with Timing */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <div className="w-1 h-6 bg-primary rounded-full"></div>
-            <h3 className="text-lg font-bold text-foreground">Ingredients</h3>
+            <h3 className="text-lg font-bold text-foreground">Ingredients & Cooking Times</h3>
             <Badge variant="secondary" className="ml-auto">
               {recipe.ingredients.length} items
             </Badge>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {recipe.ingredients.map((ingredient, index) => (
-              <div 
-                key={index} 
-                className="flex items-center gap-3 p-3 bg-card/50 rounded-lg border border-border/50 hover:bg-card/80 transition-colors"
-              >
-                <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
-                <span className="text-sm font-medium text-foreground">{ingredient}</span>
-              </div>
-            ))}
+          <div className="space-y-3">
+            {recipe.ingredientsWithTiming && recipe.ingredientsWithTiming.length > 0 ? (
+              recipe.ingredientsWithTiming.map((ingredient, index) => (
+                <div 
+                  key={index} 
+                  className="flex items-center gap-4 p-4 bg-card/50 rounded-lg border border-border/50 hover:bg-card/80 transition-colors"
+                >
+                  <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
+                  <div className="flex-1">
+                    <div className="font-medium text-foreground">{ingredient.name}</div>
+                    <div className="text-sm text-muted-foreground">{ingredient.cookingMethod}</div>
+                  </div>
+                  <div className="flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full">
+                    <Timer className="w-3 h-3 text-primary" />
+                    <span className="text-xs font-medium text-primary">{ingredient.cookingTime}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              recipe.ingredients.map((ingredient, index) => (
+                <div 
+                  key={index} 
+                  className="flex items-center gap-3 p-3 bg-card/50 rounded-lg border border-border/50 hover:bg-card/80 transition-colors"
+                >
+                  <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                  <span className="text-sm font-medium text-foreground">{ingredient}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -165,3 +237,5 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
     </Card>
   );
 };
+
+export const RecipeCard = RecipeCardComponent;

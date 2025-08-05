@@ -5,14 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Heart, Clock, Trash2 } from 'lucide-react';
 
-interface Recipe {
-  id: string;
-  title: string;
-  cookTime: string;
-  instructions: string[];
-  ingredients: string[];
-  createdAt: Date;
-}
+import { Recipe } from '@/types/recipe';
 
 interface FavoritesPanelProps {
   favorites: Recipe[];
