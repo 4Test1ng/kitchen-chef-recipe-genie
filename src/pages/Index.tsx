@@ -70,50 +70,89 @@ const KitchenChef = () => {
     setFavorites(newFavorites);
   };
 
-  // Mock AI recipe generation (replace with actual Genkit implementation)
+  // AI recipe generation with strict ingredient constraint
   const generateRecipe = async (ingredientList: string[]): Promise<Recipe> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const prompt = `Create a recipe using ONLY the following ingredients: ${ingredientList.join(', ')}.
+
+STRICT REQUIREMENTS:
+- You MUST use ONLY the ingredients provided in the list above
+- Do NOT suggest or add any additional ingredients not in the list
+- Do NOT mention ingredients that are not provided
+- Create a practical recipe that can be made with just these ingredients
+- Assume basic seasonings like salt and pepper are available
+- Provide step-by-step cooking instructions
+- Estimate cooking time
+
+Format your response as JSON:
+{
+  "title": "Recipe Name",
+  "cookTime": "X minutes",
+  "instructions": ["step 1", "step 2", ...]
+}`;
+
+      // For now, we'll use a deterministic approach based on ingredients
+      // In a real implementation, this would call an AI API
+      const response = await generateRecipeWithAI(prompt, ingredientList);
+      
+      return {
+        id: Date.now().toString(),
+        ...response,
+        ingredients: ingredientList,
+        createdAt: new Date()
+      };
+    } catch (error) {
+      console.error('Recipe generation failed:', error);
+      // Fallback to a simple recipe using only provided ingredients
+      return generateFallbackRecipe(ingredientList);
+    }
+  };
+
+  // Fallback recipe generator that strictly uses only provided ingredients
+  const generateFallbackRecipe = (ingredientList: string[]): Recipe => {
+    const hasProtein = ingredientList.some(ing => 
+      ['chicken', 'beef', 'pork', 'fish', 'salmon', 'turkey', 'egg'].some(protein => 
+        ing.toLowerCase().includes(protein)
+      )
+    );
     
-    const sampleRecipes = [
-      {
-        title: "Mediterranean Veggie Pasta",
-        cookTime: "25 minutes",
-        instructions: [
-          "Boil pasta according to package instructions",
-          "Heat olive oil in a large pan over medium heat",
-          "Sauté diced onions until translucent, about 5 minutes",
-          "Add minced garlic and cook for 1 minute",
-          "Add diced tomatoes and cook until softened",
-          "Season with salt, pepper, and Italian herbs",
-          "Toss cooked pasta with the vegetable mixture",
-          "Garnish with fresh basil and serve hot"
-        ]
-      },
-      {
-        title: "Hearty Chicken and Rice Bowl",
-        cookTime: "30 minutes",
-        instructions: [
-          "Season chicken breast with salt and pepper",
-          "Cook rice according to package directions",
-          "Heat oil in a skillet and cook chicken until golden",
-          "Remove chicken and slice into strips",
-          "In the same pan, sauté vegetables until tender",
-          "Add cooked rice and chicken back to the pan",
-          "Stir everything together and heat through",
-          "Serve hot with your favorite sauce"
-        ]
-      }
+    const hasCarbs = ingredientList.some(ing => 
+      ['rice', 'pasta', 'bread', 'potato', 'noodle'].some(carb => 
+        ing.toLowerCase().includes(carb)
+      )
+    );
+
+    const title = hasProtein && hasCarbs 
+      ? `${ingredientList[0]} Bowl with ${ingredientList.slice(1, 3).join(' and ')}`
+      : `Simple ${ingredientList.slice(0, 2).join(' and ')} Dish`;
+
+    const instructions = [
+      `Prepare all your ingredients: ${ingredientList.join(', ')}`,
+      hasCarbs ? "Cook any grains or starches according to package directions" : "Begin by preparing your main ingredients",
+      hasProtein ? "Cook protein ingredients until fully cooked and safe to eat" : "Heat your main ingredients in a pan",
+      "Combine all ingredients in a serving dish",
+      "Season with salt and pepper to taste",
+      "Serve hot and enjoy your custom recipe!"
     ];
 
-    const randomRecipe = sampleRecipes[Math.floor(Math.random() * sampleRecipes.length)];
-    
     return {
       id: Date.now().toString(),
-      ...randomRecipe,
+      title,
+      cookTime: "20-25 minutes",
+      instructions,
       ingredients: ingredientList,
       createdAt: new Date()
     };
+  };
+
+  // Placeholder for AI API call - replace with actual AI service
+  const generateRecipeWithAI = async (prompt: string, ingredientList: string[]) => {
+    // Simulate AI processing time
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // For now, return the fallback recipe
+    // In a real implementation, this would call OpenAI or another AI service
+    return generateFallbackRecipe(ingredientList);
   };
 
   const handleGenerateRecipe = async () => {
