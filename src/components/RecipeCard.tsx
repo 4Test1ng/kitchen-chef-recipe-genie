@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Clock, Heart, Sparkles, ChefHat, Users, Target, Timer, ShoppingCart } from 'lucide-react';
 import { ShoppingListDialog } from './ShoppingListDialog';
 import { RecipeScaler } from './RecipeScaler';
@@ -26,6 +27,17 @@ const RecipeCardComponent: React.FC<RecipeCardProps> = ({
   isFavorited
 }) => {
   const [scaledServings, setScaledServings] = React.useState(recipe.servings || 2);
+  const [completedSteps, setCompletedSteps] = React.useState<boolean[]>(
+    new Array(recipe.instructions.length).fill(false)
+  );
+
+  const toggleStepCompletion = (stepIndex: number) => {
+    setCompletedSteps(prev => 
+      prev.map((completed, index) => 
+        index === stepIndex ? !completed : completed
+      )
+    );
+  };
 
   if (isGenerating) {
     return (
@@ -219,18 +231,40 @@ const RecipeCardComponent: React.FC<RecipeCardProps> = ({
             </Badge>
           </div>
           <div className="space-y-4">
-            {recipe.instructions.map((instruction, index) => (
-              <div key={index} className="group">
-                <div className="flex gap-4 p-4 bg-card/30 rounded-xl border border-border/30 hover:bg-card/50 hover:border-border/50 transition-all duration-200">
-                  <div className="flex-shrink-0 w-8 h-8 gradient-primary text-primary-foreground text-sm font-bold rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    {index + 1}
+            {recipe.instructions.map((instruction, index) => {
+              const isCompleted = completedSteps[index];
+              return (
+                <div key={index} className="group">
+                  <div className={`flex gap-4 p-4 rounded-xl border transition-all duration-200 ${
+                    isCompleted 
+                      ? "bg-success/10 border-success/20" 
+                      : "bg-card/30 border-border/30 hover:bg-card/50 hover:border-border/50"
+                  }`}>
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={isCompleted}
+                        onCheckedChange={() => toggleStepCompletion(index)}
+                        className="mt-1 data-[state=checked]:bg-success data-[state=checked]:border-success"
+                      />
+                      <div className={`flex-shrink-0 w-8 h-8 text-sm font-bold rounded-full flex items-center justify-center shadow-lg transition-all ${
+                        isCompleted 
+                          ? "bg-success text-success-foreground" 
+                          : "gradient-primary text-primary-foreground group-hover:scale-110"
+                      }`}>
+                        {index + 1}
+                      </div>
+                    </div>
+                    <p className={`leading-relaxed pt-1 transition-all duration-200 ${
+                      isCompleted 
+                        ? "text-muted-foreground line-through opacity-75" 
+                        : "text-foreground"
+                    }`}>
+                      {instruction}
+                    </p>
                   </div>
-                  <p className="text-foreground leading-relaxed pt-1">
-                    {instruction}
-                  </p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </CardContent>
