@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { IngredientChipsInput } from '@/components/IngredientChipsInput';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -417,11 +417,11 @@ Format your response as JSON:
               <CardContent className="space-y-6">
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-foreground">Your Ingredients</label>
-                  <Textarea
-                    placeholder="Enter your ingredients separated by commas (e.g., chicken, rice, tomatoes, onions)"
+                  <IngredientChipsInput
                     value={ingredients}
-                    onChange={(e) => setIngredients(e.target.value)}
-                    className="min-h-[100px] resize-none bg-background/50 border-border/50 focus:border-primary transition-colors"
+                    onChange={setIngredients}
+                    placeholder="Enter ingredients (e.g., chicken, rice, tomatoes, onions)"
+                    className="bg-background/50"
                   />
                 </div>
                 

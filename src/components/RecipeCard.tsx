@@ -5,11 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Clock, Heart, Sparkles, ChefHat, Users, Target, Timer, ShoppingCart, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Clock, Heart, Sparkles, ChefHat, Users, Target, Timer, ShoppingCart, ThumbsUp, ThumbsDown, Share2, Printer } from 'lucide-react';
 import { ShoppingListDialog } from './ShoppingListDialog';
 import { RecipeScaler } from './RecipeScaler';
 
 import { Recipe } from '@/types/recipe';
+import { toast } from '@/hooks/use-toast';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -69,6 +70,28 @@ const RecipeCardComponent: React.FC<RecipeCardProps> = ({
         index === stepIndex ? !completed : completed
       )
     );
+  };
+
+  const handleShare = async () => {
+    try {
+      const shareData = {
+        title: 'KitchenChef Recipe',
+        text: `${recipe.title} — generated with KitchenChef`,
+        url: window.location.href,
+      };
+      if ((navigator as any).share) {
+        await (navigator as any).share(shareData);
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
+        toast({ title: 'Link copied', description: 'Recipe link copied to clipboard.' });
+      }
+    } catch (e) {
+      toast({ title: 'Share failed', description: 'Unable to share right now.', variant: 'destructive' });
+    }
+  };
+  const handlePrint = () => {
+    toast({ title: 'Print', description: 'Opening print dialog...' });
+    window.print();
   };
 
   if (isGenerating) {
@@ -179,6 +202,26 @@ const RecipeCardComponent: React.FC<RecipeCardProps> = ({
                 className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20"
               >
                 <ThumbsDown className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleShare}
+                aria-label="Share recipe"
+                className="hover:bg-primary/10 hover:border-primary/30"
+              >
+                <Share2 className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePrint}
+                aria-label="Print recipe"
+                className="hover:bg-accent/20 hover:border-accent/40"
+              >
+                <Printer className="w-4 h-4" />
               </Button>
             </div>
             <ShoppingListDialog 
