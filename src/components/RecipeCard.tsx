@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Clock, Heart, Sparkles, ChefHat, Users, Target, Timer, ShoppingCart } from 'lucide-react';
+import { Clock, Heart, Sparkles, ChefHat, Users, Target, Timer, ShoppingCart, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { ShoppingListDialog } from './ShoppingListDialog';
 import { RecipeScaler } from './RecipeScaler';
 
@@ -17,6 +17,7 @@ interface RecipeCardProps {
   onImprove: () => void;
   onAddToFavorites: () => void;
   isFavorited: boolean;
+  onRate: (feedback: 'up' | 'down') => void;
 }
 
 const RecipeCardComponent: React.FC<RecipeCardProps> = ({
@@ -24,12 +25,43 @@ const RecipeCardComponent: React.FC<RecipeCardProps> = ({
   isGenerating,
   onImprove,
   onAddToFavorites,
-  isFavorited
+  isFavorited,
+  onRate
 }) => {
   const [scaledServings, setScaledServings] = React.useState(recipe.servings || 2);
   const [completedSteps, setCompletedSteps] = React.useState<boolean[]>(
     new Array(recipe.instructions.length).fill(false)
   );
+
+  // Load persisted state
+  React.useEffect(() => {
+    const saved = localStorage.getItem(`kitchenchef-progress-${recipe.id}`);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (typeof data.scaledServings === 'number') {
+          setScaledServings(data.scaledServings);
+        }
+        if (Array.isArray(data.completedSteps)) {
+          const arr = new Array(recipe.instructions.length).fill(false);
+          data.completedSteps.forEach((v: boolean, i: number) => {
+            if (i < arr.length) arr[i] = !!v;
+          });
+          setCompletedSteps(arr);
+        }
+      } catch {
+        // ignore
+      }
+    }
+  }, [recipe.id, recipe.instructions.length]);
+
+  // Persist on change
+  React.useEffect(() => {
+    localStorage.setItem(
+      `kitchenchef-progress-${recipe.id}`,
+      JSON.stringify({ scaledServings, completedSteps })
+    );
+  }, [scaledServings, completedSteps, recipe.id]);
 
   const toggleStepCompletion = (stepIndex: number) => {
     setCompletedSteps(prev => 
@@ -129,6 +161,26 @@ const RecipeCardComponent: React.FC<RecipeCardProps> = ({
               <Heart className={`w-4 h-4 mr-2 ${isFavorited ? "fill-current" : ""}`} />
               {isFavorited ? "Saved" : "Save"}
             </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onRate('up')}
+                aria-label="Thumbs up"
+                className="hover:bg-success/10 hover:text-success hover:border-success/20"
+              >
+                <ThumbsUp className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onRate('down')}
+                aria-label="Thumbs down"
+                className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20"
+              >
+                <ThumbsDown className="w-4 h-4" />
+              </Button>
+            </div>
             <ShoppingListDialog 
               recipe={recipe} 
               scalingFactor={scaledServings / (recipe.servings || 2)} 

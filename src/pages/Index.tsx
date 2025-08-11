@@ -24,6 +24,8 @@ const KitchenChef = () => {
   const [favorites, setFavorites] = useState<Recipe[]>([]);
   const [improveDialogOpen, setImproveDialogOpen] = useState(false);
   const [totalRecipesGenerated, setTotalRecipesGenerated] = useState(0);
+  const [thumbsUp, setThumbsUp] = useState(0);
+  const [thumbsDown, setThumbsDown] = useState(0);
   const [quickSuggestions] = useState([
     "Chicken, rice, vegetables",
     "Pasta, tomatoes, basil",
@@ -37,6 +39,8 @@ const KitchenChef = () => {
     const savedHistory = localStorage.getItem('kitchenchef-ingredient-history');
     const savedFavorites = localStorage.getItem('kitchenchef-favorites');
     const savedTotal = localStorage.getItem('kitchenchef-total-generated');
+    const savedUp = localStorage.getItem('kitchenchef-feedback-up');
+    const savedDown = localStorage.getItem('kitchenchef-feedback-down');
     
     if (savedHistory) {
       setIngredientHistory(JSON.parse(savedHistory));
@@ -49,6 +53,9 @@ const KitchenChef = () => {
     if (savedTotal) {
       setTotalRecipesGenerated(parseInt(savedTotal));
     }
+
+    if (savedUp) setThumbsUp(parseInt(savedUp));
+    if (savedDown) setThumbsDown(parseInt(savedDown));
   }, []);
 
   // Save ingredient history to localStorage
@@ -327,6 +334,20 @@ Format your response as JSON:
     });
   };
 
+  const handleRecipeFeedback = (feedback: 'up' | 'down') => {
+    if (feedback === 'up') {
+      const next = thumbsUp + 1;
+      setThumbsUp(next);
+      localStorage.setItem('kitchenchef-feedback-up', next.toString());
+      toast({ title: "Thanks for the feedback!", description: "Glad you liked this recipe." });
+    } else {
+      const next = thumbsDown + 1;
+      setThumbsDown(next);
+      localStorage.setItem('kitchenchef-feedback-down', next.toString());
+      toast({ title: "Feedback noted", description: "We'll aim to improve future recipes." });
+    }
+  };
+
   return (
     <div className="min-h-screen gradient-bg">
       <div className="container mx-auto px-4 py-8">
@@ -370,10 +391,10 @@ Format your response as JSON:
           />
           <StatCard
             title="Success Rate"
-            value={totalRecipesGenerated > 0 ? Math.min(95 + (favorites.length / totalRecipesGenerated) * 5, 100).toFixed(0) + "%" : "100%"}
+            value={thumbsUp + thumbsDown > 0 ? Math.round((thumbsUp / (thumbsUp + thumbsDown)) * 100) + "%" : "—"}
             icon={TrendingUp}
             description="Recipe satisfaction"
-            trend={{ value: favorites.length > 0 ? Math.round((favorites.length / Math.max(totalRecipesGenerated, 1)) * 10) : 5, isPositive: true }}
+            trend={{ value: thumbsUp + thumbsDown > 0 ? Math.round(((thumbsUp - thumbsDown) / Math.max(thumbsUp + thumbsDown, 1)) * 100) : 0, isPositive: thumbsUp >= thumbsDown }}
           />
         </div>
 
@@ -507,6 +528,7 @@ Format your response as JSON:
                 onImprove={() => setImproveDialogOpen(true)}
                 onAddToFavorites={handleAddToFavorites}
                 isFavorited={favorites.some(fav => fav.title === currentRecipe.title)}
+                onRate={handleRecipeFeedback}
               />
             ) : (
               <Card className="glass-card text-center h-full min-h-[500px] flex items-center justify-center">
