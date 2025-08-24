@@ -3,10 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { IngredientChipsInput } from '@/components/IngredientChipsInput';
+import { DishInput } from '@/components/DishInput';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChefHat, Clock, Heart, History, Sparkles, Plus, TrendingUp, Users, Star, BookOpen, X } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ChefHat, Clock, Heart, History, Sparkles, Plus, TrendingUp, Users, Star, BookOpen, X, Utensils } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { RecipeCard } from '@/components/RecipeCard';
 import { RecipeImproveDialog } from '@/components/RecipeImproveDialog';
@@ -15,12 +17,16 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { StatCard } from '@/components/StatCard';
 
 import { Recipe, IngredientWithTiming } from '@/types/recipe';
+import { SearchMode } from '@/types/dish';
 
 const KitchenChef = () => {
+  const [searchMode, setSearchMode] = useState<SearchMode>('ingredients');
   const [ingredients, setIngredients] = useState('');
+  const [dishName, setDishName] = useState('');
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [ingredientHistory, setIngredientHistory] = useState<string[]>([]);
+  const [dishHistory, setDishHistory] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<Recipe[]>([]);
   const [improveDialogOpen, setImproveDialogOpen] = useState(false);
   const [totalRecipesGenerated, setTotalRecipesGenerated] = useState(0);
@@ -37,6 +43,7 @@ const KitchenChef = () => {
   // Load data from localStorage on component mount
   useEffect(() => {
     const savedHistory = localStorage.getItem('kitchenchef-ingredient-history');
+    const savedDishHistory = localStorage.getItem('kitchenchef-dish-history');
     const savedFavorites = localStorage.getItem('kitchenchef-favorites');
     const savedTotal = localStorage.getItem('kitchenchef-total-generated');
     const savedUp = localStorage.getItem('kitchenchef-feedback-up');
@@ -44,6 +51,10 @@ const KitchenChef = () => {
     
     if (savedHistory) {
       setIngredientHistory(JSON.parse(savedHistory));
+    }
+    
+    if (savedDishHistory) {
+      setDishHistory(JSON.parse(savedDishHistory));
     }
     
     if (savedFavorites) {
@@ -62,6 +73,12 @@ const KitchenChef = () => {
   const saveIngredientHistory = (newHistory: string[]) => {
     localStorage.setItem('kitchenchef-ingredient-history', JSON.stringify(newHistory));
     setIngredientHistory(newHistory);
+  };
+
+  // Save dish history to localStorage
+  const saveDishHistory = (newHistory: string[]) => {
+    localStorage.setItem('kitchenchef-dish-history', JSON.stringify(newHistory));
+    setDishHistory(newHistory);
   };
 
   // Save favorites to localStorage
@@ -209,6 +226,54 @@ Format your response as JSON:
     };
   };
 
+  // Generate recipe from dish name
+  const generateRecipeFromDish = async (dish: string): Promise<Recipe> => {
+    const dishData = getDishData(dish);
+    return generateRecipe(dishData.commonIngredients);
+  };
+
+  // Knowledge base for popular dishes
+  const getDishData = (dishName: string) => {
+    const dishLower = dishName.toLowerCase();
+    
+    // Basic dish knowledge base
+    const dishDatabase: Record<string, string[]> = {
+      'spaghetti carbonara': ['spaghetti', 'eggs', 'bacon', 'parmesan cheese', 'black pepper'],
+      'chicken fried rice': ['chicken', 'rice', 'eggs', 'soy sauce', 'vegetables'],
+      'margherita pizza': ['pizza dough', 'tomato sauce', 'mozzarella cheese', 'basil'],
+      'beef stir fry': ['beef', 'vegetables', 'soy sauce', 'garlic', 'ginger'],
+      'chocolate chip cookies': ['flour', 'butter', 'sugar', 'eggs', 'chocolate chips'],
+      'chicken tacos': ['chicken', 'tortillas', 'lettuce', 'tomatoes', 'cheese'],
+      'pad thai': ['rice noodles', 'shrimp', 'eggs', 'peanuts', 'bean sprouts'],
+      'caesar salad': ['lettuce', 'parmesan cheese', 'croutons', 'caesar dressing'],
+      'grilled cheese': ['bread', 'cheese', 'butter'],
+      'pancakes': ['flour', 'eggs', 'milk', 'sugar', 'baking powder'],
+      'chicken parmesan': ['chicken', 'breadcrumbs', 'parmesan cheese', 'tomato sauce'],
+      'butter chicken': ['chicken', 'tomatoes', 'cream', 'butter', 'spices'],
+      'fish and chips': ['fish', 'potatoes', 'flour', 'oil'],
+      'lasagna': ['lasagna noodles', 'ground beef', 'cheese', 'tomato sauce'],
+      'ramen': ['ramen noodles', 'broth', 'eggs', 'vegetables', 'meat']
+    };
+
+    // Find exact match or partial match
+    const exactMatch = dishDatabase[dishLower];
+    if (exactMatch) {
+      return { commonIngredients: exactMatch };
+    }
+
+    // Fuzzy matching for common dish patterns
+    for (const [dish, ingredients] of Object.entries(dishDatabase)) {
+      if (dish.includes(dishLower) || dishLower.includes(dish)) {
+        return { commonIngredients: ingredients };
+      }
+    }
+
+    // Default ingredients for unknown dishes
+    return {
+      commonIngredients: ['main protein', 'vegetables', 'seasonings', 'cooking oil']
+    };
+  };
+
   // Placeholder for AI API call - replace with actual AI service
   const generateRecipeWithAI = async (prompt: string, ingredientList: string[]) => {
     // Simulate AI processing time
@@ -220,10 +285,13 @@ Format your response as JSON:
   };
 
   const handleGenerateRecipe = async () => {
-    if (!ingredients.trim()) {
+    const input = searchMode === 'ingredients' ? ingredients : dishName;
+    const inputType = searchMode === 'ingredients' ? 'ingredients' : 'dish name';
+    
+    if (!input.trim()) {
       toast({
-        title: "Missing ingredients",
-        description: "Please enter some ingredients to generate a recipe.",
+        title: `Missing ${inputType}`,
+        description: `Please enter ${inputType} to generate a recipe.`,
         variant: "destructive",
       });
       return;
@@ -232,13 +300,24 @@ Format your response as JSON:
     setIsGenerating(true);
     
     try {
-      const ingredientList = ingredients.split(',').map(item => item.trim()).filter(Boolean);
+      let recipe: Recipe;
       
-      // Add to history (avoid duplicates)
-      const newHistory = [ingredients, ...ingredientHistory.filter(item => item !== ingredients)].slice(0, 10);
-      saveIngredientHistory(newHistory);
+      if (searchMode === 'ingredients') {
+        const ingredientList = ingredients.split(',').map(item => item.trim()).filter(Boolean);
+        
+        // Add to ingredient history
+        const newHistory = [ingredients, ...ingredientHistory.filter(item => item !== ingredients)].slice(0, 10);
+        saveIngredientHistory(newHistory);
+        
+        recipe = await generateRecipe(ingredientList);
+      } else {
+        // Add to dish history
+        const newHistory = [dishName, ...dishHistory.filter(item => item !== dishName)].slice(0, 10);
+        saveDishHistory(newHistory);
+        
+        recipe = await generateRecipeFromDish(dishName);
+      }
       
-      const recipe = await generateRecipe(ingredientList);
       setCurrentRecipe(recipe);
       
       const newTotal = totalRecipesGenerated + 1;
@@ -252,7 +331,7 @@ Format your response as JSON:
     } catch (error) {
       toast({
         title: "Error generating recipe",
-        description: "Please try again with different ingredients.",
+        description: "Please try again with different input.",
         variant: "destructive",
       });
     } finally {
@@ -320,17 +399,28 @@ Format your response as JSON:
     });
   };
 
-  const handleHistoryClick = (historicalIngredients: string) => {
-    setIngredients(historicalIngredients);
+  const handleHistoryClick = (historicalItem: string, type: 'ingredients' | 'dish') => {
+    if (type === 'ingredients') {
+      setIngredients(historicalItem);
+      setSearchMode('ingredients');
+    } else {
+      setDishName(historicalItem);
+      setSearchMode('dish');
+    }
   };
 
-  const handleRemoveFromHistory = (indexToRemove: number) => {
-    const newHistory = ingredientHistory.filter((_, index) => index !== indexToRemove);
-    saveIngredientHistory(newHistory);
+  const handleRemoveFromHistory = (indexToRemove: number, type: 'ingredients' | 'dish') => {
+    if (type === 'ingredients') {
+      const newHistory = ingredientHistory.filter((_, index) => index !== indexToRemove);
+      saveIngredientHistory(newHistory);
+    } else {
+      const newHistory = dishHistory.filter((_, index) => index !== indexToRemove);
+      saveDishHistory(newHistory);
+    }
     
     toast({
       title: "Removed from history",
-      description: "Ingredient search removed from your recent searches.",
+      description: `${type === 'ingredients' ? 'Ingredient' : 'Dish'} search removed from your recent searches.`,
     });
   };
 
@@ -415,33 +505,60 @@ Format your response as JSON:
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-foreground">Your Ingredients</label>
-                  <IngredientChipsInput
-                    value={ingredients}
-                    onChange={setIngredients}
-                    placeholder="Enter ingredients (e.g., chicken, rice, tomatoes, onions)"
-                    className="bg-background/50"
-                  />
-                </div>
-                
-                {/* Quick suggestions */}
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-foreground">Quick suggestions</label>
-                  <div className="flex flex-wrap gap-2">
-                    {quickSuggestions.map((suggestion, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        className="text-xs hover:bg-primary/10 hover:border-primary transition-colors"
-                        onClick={() => setIngredients(suggestion)}
-                      >
-                        {suggestion}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+                <Tabs value={searchMode} onValueChange={(value) => setSearchMode(value as SearchMode)}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="ingredients" className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" />
+                      By Ingredients
+                    </TabsTrigger>
+                    <TabsTrigger value="dish" className="flex items-center gap-2">
+                      <Utensils className="w-4 h-4" />
+                      By Dish
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="ingredients" className="space-y-4">
+                    <div className="space-y-3">
+                      <label className="text-sm font-medium text-foreground">Your Ingredients</label>
+                      <IngredientChipsInput
+                        value={ingredients}
+                        onChange={setIngredients}
+                        placeholder="Enter ingredients (e.g., chicken, rice, tomatoes, onions)"
+                        className="bg-background/50"
+                      />
+                    </div>
+                    
+                    {/* Quick ingredient suggestions */}
+                    <div className="space-y-3">
+                      <label className="text-sm font-medium text-foreground">Quick suggestions</label>
+                      <div className="flex flex-wrap gap-2">
+                        {quickSuggestions.map((suggestion, index) => (
+                          <Button
+                            key={index}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs hover:bg-primary/10 hover:border-primary transition-colors"
+                            onClick={() => setIngredients(suggestion)}
+                          >
+                            {suggestion}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="dish" className="space-y-4">
+                    <div className="space-y-3">
+                      <label className="text-sm font-medium text-foreground">Dish Name</label>
+                      <DishInput
+                        value={dishName}
+                        onChange={setDishName}
+                        placeholder="Enter a dish name (e.g., Chicken Parmesan, Pad Thai, Tacos)"
+                        className="bg-background/50"
+                      />
+                    </div>
+                  </TabsContent>
+                </Tabs>
 
                 <Button 
                   onClick={handleGenerateRecipe}
@@ -461,8 +578,8 @@ Format your response as JSON:
               </CardContent>
             </Card>
 
-            {/* Ingredient History */}
-            {ingredientHistory.length > 0 && (
+            {/* Search History */}
+            {(ingredientHistory.length > 0 || dishHistory.length > 0) && (
               <Card className="glass-card">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3">
@@ -477,34 +594,82 @@ Format your response as JSON:
                 </CardHeader>
                 <CardContent>
                   <ScrollArea className="h-[200px]">
-                    <div className="space-y-2">
-                      {ingredientHistory.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 p-3 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-all duration-200 rounded-lg group"
-                        >
-                          <Button
-                            variant="ghost"
-                            className="flex-1 justify-start text-left h-auto p-0"
-                            onClick={() => handleHistoryClick(item)}
-                          >
-                            <div className="truncate text-sm text-foreground">
-                              {item}
-                            </div>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveFromHistory(index);
-                            }}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
+                    <div className="space-y-3">
+                      {ingredientHistory.length > 0 && (
+                        <div>
+                          <h4 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                            <Sparkles className="w-3 h-3" />
+                            By Ingredients
+                          </h4>
+                          <div className="space-y-1">
+                            {ingredientHistory.map((item, index) => (
+                              <div
+                                key={`ing-${index}`}
+                                className="flex items-center gap-2 p-2 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-all duration-200 rounded-md group"
+                              >
+                                <Button
+                                  variant="ghost"
+                                  className="flex-1 justify-start text-left h-auto p-0"
+                                  onClick={() => handleHistoryClick(item, 'ingredients')}
+                                >
+                                  <div className="truncate text-sm text-foreground">
+                                    {item}
+                                  </div>
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveFromHistory(index, 'ingredients');
+                                  }}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      ))}
+                      )}
+                      
+                      {dishHistory.length > 0 && (
+                        <div>
+                          <h4 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                            <Utensils className="w-3 h-3" />
+                            By Dish
+                          </h4>
+                          <div className="space-y-1">
+                            {dishHistory.map((item, index) => (
+                              <div
+                                key={`dish-${index}`}
+                                className="flex items-center gap-2 p-2 hover:bg-primary/5 hover:border-primary/20 border border-transparent transition-all duration-200 rounded-md group"
+                              >
+                                <Button
+                                  variant="ghost"
+                                  className="flex-1 justify-start text-left h-auto p-0"
+                                  onClick={() => handleHistoryClick(item, 'dish')}
+                                >
+                                  <div className="truncate text-sm text-foreground">
+                                    {item}
+                                  </div>
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveFromHistory(index, 'dish');
+                                  }}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </ScrollArea>
                 </CardContent>
