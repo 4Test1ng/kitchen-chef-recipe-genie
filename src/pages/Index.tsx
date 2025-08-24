@@ -236,23 +236,76 @@ Format your response as JSON:
   const getDishData = (dishName: string) => {
     const dishLower = dishName.toLowerCase();
     
-    // Basic dish knowledge base
+    // Expanded dish knowledge base with international cuisine
     const dishDatabase: Record<string, string[]> = {
+      // Italian
       'spaghetti carbonara': ['spaghetti', 'eggs', 'bacon', 'parmesan cheese', 'black pepper'],
-      'chicken fried rice': ['chicken', 'rice', 'eggs', 'soy sauce', 'vegetables'],
       'margherita pizza': ['pizza dough', 'tomato sauce', 'mozzarella cheese', 'basil'],
-      'beef stir fry': ['beef', 'vegetables', 'soy sauce', 'garlic', 'ginger'],
-      'chocolate chip cookies': ['flour', 'butter', 'sugar', 'eggs', 'chocolate chips'],
-      'chicken tacos': ['chicken', 'tortillas', 'lettuce', 'tomatoes', 'cheese'],
+      'chicken parmesan': ['chicken', 'breadcrumbs', 'parmesan cheese', 'tomato sauce'],
+      'lasagna': ['lasagna noodles', 'ground beef', 'cheese', 'tomato sauce'],
+      'risotto': ['arborio rice', 'broth', 'parmesan cheese', 'onions', 'white wine'],
+      
+      // Asian - Chinese
+      'chicken fried rice': ['chicken', 'rice', 'eggs', 'soy sauce', 'vegetables'],
+      'sweet and sour pork': ['pork', 'pineapple', 'bell peppers', 'vinegar', 'sugar'],
+      'kung pao chicken': ['chicken', 'peanuts', 'chili peppers', 'soy sauce', 'garlic'],
+      'beef and broccoli': ['beef', 'broccoli', 'soy sauce', 'garlic', 'ginger'],
+      
+      // Asian - Thai
       'pad thai': ['rice noodles', 'shrimp', 'eggs', 'peanuts', 'bean sprouts'],
+      'green curry': ['chicken', 'coconut milk', 'green curry paste', 'thai basil', 'eggplant'],
+      'tom yum soup': ['shrimp', 'lemongrass', 'lime leaves', 'mushrooms', 'chili'],
+      
+      // Asian - Japanese
+      'ramen': ['ramen noodles', 'broth', 'eggs', 'vegetables', 'meat'],
+      'teriyaki chicken': ['chicken', 'soy sauce', 'mirin', 'sugar', 'ginger'],
+      'sushi rolls': ['sushi rice', 'nori', 'fish', 'vegetables', 'wasabi'],
+      
+      // Asian - Korean
+      'kimchi fried rice': ['rice', 'kimchi', 'pork', 'eggs', 'sesame oil'],
+      'bulgogi': ['beef', 'soy sauce', 'pear', 'garlic', 'sesame oil'],
+      'bibimbap': ['rice', 'vegetables', 'beef', 'egg', 'gochujang'],
+      
+      // Asian - Indian
+      'butter chicken': ['chicken', 'tomatoes', 'cream', 'butter', 'spices'],
+      'chicken curry': ['chicken', 'onions', 'tomatoes', 'curry spices', 'coconut milk'],
+      'biryani': ['rice', 'chicken', 'onions', 'spices', 'yogurt'],
+      
+      // Mexican/Latin American
+      'chicken tacos': ['chicken', 'tortillas', 'lettuce', 'tomatoes', 'cheese'],
+      'quesadillas': ['tortillas', 'cheese', 'chicken', 'peppers', 'onions'],
+      'enchiladas': ['tortillas', 'chicken', 'cheese', 'enchilada sauce', 'onions'],
+      'paella': ['rice', 'seafood', 'chicken', 'saffron', 'vegetables'],
+      
+      // European - French
+      'coq au vin': ['chicken', 'red wine', 'mushrooms', 'bacon', 'onions'],
+      'french onion soup': ['onions', 'beef broth', 'cheese', 'bread', 'butter'],
+      'beef bourguignon': ['beef', 'red wine', 'mushrooms', 'carrots', 'onions'],
+      
+      // European - German
+      'schnitzel': ['pork', 'breadcrumbs', 'eggs', 'flour', 'lemon'],
+      'sauerbraten': ['beef', 'vinegar', 'vegetables', 'spices', 'gravy'],
+      
+      // European - Greek
+      'moussaka': ['eggplant', 'ground lamb', 'bechamel sauce', 'tomatoes', 'cheese'],
+      'souvlaki': ['pork', 'olive oil', 'lemon', 'oregano', 'garlic'],
+      
+      // Middle Eastern
+      'shawarma': ['lamb', 'pita bread', 'tahini', 'vegetables', 'spices'],
+      'falafel': ['chickpeas', 'herbs', 'spices', 'onions', 'garlic'],
+      'hummus': ['chickpeas', 'tahini', 'lemon', 'garlic', 'olive oil'],
+      
+      // African
+      'jollof rice': ['rice', 'tomatoes', 'onions', 'spices', 'chicken'],
+      'tagine': ['chicken', 'vegetables', 'spices', 'olives', 'preserved lemons'],
+      
+      // American classics
       'caesar salad': ['lettuce', 'parmesan cheese', 'croutons', 'caesar dressing'],
       'grilled cheese': ['bread', 'cheese', 'butter'],
       'pancakes': ['flour', 'eggs', 'milk', 'sugar', 'baking powder'],
-      'chicken parmesan': ['chicken', 'breadcrumbs', 'parmesan cheese', 'tomato sauce'],
-      'butter chicken': ['chicken', 'tomatoes', 'cream', 'butter', 'spices'],
+      'chocolate chip cookies': ['flour', 'butter', 'sugar', 'eggs', 'chocolate chips'],
       'fish and chips': ['fish', 'potatoes', 'flour', 'oil'],
-      'lasagna': ['lasagna noodles', 'ground beef', 'cheese', 'tomato sauce'],
-      'ramen': ['ramen noodles', 'broth', 'eggs', 'vegetables', 'meat']
+      'mac and cheese': ['pasta', 'cheese', 'milk', 'butter', 'flour']
     };
 
     // Find exact match or partial match

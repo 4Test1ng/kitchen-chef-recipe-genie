@@ -15,17 +15,37 @@ interface DishInputProps {
 
 const DISH_SUGGESTIONS = [
   // Italian
-  "Spaghetti Carbonara", "Margherita Pizza", "Chicken Parmesan", "Fettuccine Alfredo", "Lasagna",
-  // Asian
-  "Chicken Fried Rice", "Pad Thai", "Beef Stir Fry", "Sushi Rolls", "Ramen",
+  "Spaghetti Carbonara", "Margherita Pizza", "Chicken Parmesan", "Fettuccine Alfredo", "Lasagna", "Risotto", "Osso Buco", "Tiramisu",
+  // Asian - Chinese
+  "Chicken Fried Rice", "Sweet and Sour Pork", "Kung Pao Chicken", "Beef and Broccoli", "Dumplings", "Hot Pot", "Peking Duck",
+  // Asian - Thai
+  "Pad Thai", "Green Curry", "Tom Yum Soup", "Massaman Curry", "Mango Sticky Rice", "Som Tam", "Thai Basil Stir Fry",
+  // Asian - Japanese
+  "Sushi Rolls", "Ramen", "Teriyaki Chicken", "Tempura", "Miso Soup", "Katsu Curry", "Yakitori", "Udon",
+  // Asian - Korean
+  "Kimchi Fried Rice", "Bulgogi", "Bibimbap", "Korean BBQ", "Japchae", "Tteokbokki",
+  // Asian - Indian
+  "Butter Chicken", "Chicken Curry", "Biryani", "Samosas", "Naan Bread", "Palak Paneer", "Tandoori Chicken", "Dal",
   // American
-  "Grilled Cheese Sandwich", "Chocolate Chip Cookies", "Caesar Salad", "BBQ Ribs", "Mac and Cheese",
-  // Mexican
-  "Chicken Tacos", "Guacamole", "Quesadillas", "Enchiladas", "Burritos",
-  // Indian
-  "Butter Chicken", "Chicken Curry", "Biryani", "Samosas", "Naan Bread",
+  "Grilled Cheese Sandwich", "Chocolate Chip Cookies", "Caesar Salad", "BBQ Ribs", "Mac and Cheese", "Buffalo Wings", "Apple Pie", "Cheeseburger",
+  // Mexican/Latin American
+  "Chicken Tacos", "Guacamole", "Quesadillas", "Enchiladas", "Burritos", "Fajitas", "Ceviche", "Churros", "Tamales",
+  // European - French
+  "Coq au Vin", "French Onion Soup", "Croissants", "Quiche Lorraine", "Beef Bourguignon", "Crème Brûlée", "Ratatouille",
+  // European - Spanish
+  "Paella", "Gazpacho", "Patatas Bravas", "Jamón Ibérico", "Tortilla Española", "Sangria",
+  // European - German
+  "Schnitzel", "Sauerbraten", "Pretzels", "Bratwurst", "Sauerkraut", "Black Forest Cake",
+  // European - Greek
+  "Moussaka", "Greek Salad", "Souvlaki", "Spanakopita", "Baklava", "Tzatziki",
+  // Middle Eastern
+  "Hummus", "Falafel", "Shawarma", "Kebabs", "Tabbouleh", "Baklava", "Stuffed Grape Leaves",
+  // African
+  "Couscous", "Tagine", "Jollof Rice", "Injera", "Bobotie", "Bunny Chow", "Moroccan Chicken",
+  // Australian/Oceanian
+  "Meat Pie", "Lamington", "Pavlova", "Fish and Chips", "Anzac Biscuits",
   // Popular comfort foods
-  "Chicken Soup", "Pancakes", "French Toast", "Meatloaf", "Shepherd's Pie"
+  "Chicken Soup", "Pancakes", "French Toast", "Meatloaf", "Shepherd's Pie", "Fish and Chips", "Fried Chicken"
 ];
 
 export const DishInput: React.FC<DishInputProps> = ({
@@ -103,7 +123,7 @@ export const DishInput: React.FC<DishInputProps> = ({
       </div>
       
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg animate-fade-in">
+        <div className="absolute z-[60] w-full mt-1 bg-background/95 backdrop-blur-sm border border-border rounded-md shadow-xl animate-fade-in">
           <ScrollArea className="max-h-60">
             <div className="p-2">
               {filteredSuggestions.length > 0 ? (
@@ -111,7 +131,7 @@ export const DishInput: React.FC<DishInputProps> = ({
                   {filteredSuggestions.map((dish, index) => (
                     <button
                       key={index}
-                      className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
+                      className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 bg-background/80"
                       onClick={() => handleSuggestionClick(dish)}
                     >
                       <ChefHat className="w-4 h-4 text-muted-foreground" />
@@ -120,7 +140,7 @@ export const DishInput: React.FC<DishInputProps> = ({
                   ))}
                 </div>
               ) : (
-                <div className="px-3 py-4 text-sm text-muted-foreground text-center">
+                <div className="px-3 py-4 text-sm text-muted-foreground text-center bg-background/80 rounded-md">
                   No dishes found. Try typing a different dish name.
                 </div>
               )}
