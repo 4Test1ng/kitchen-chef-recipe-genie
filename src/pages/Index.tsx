@@ -293,9 +293,22 @@ Format your response as JSON:
       };
     }
 
-    // Default ingredients for unknown dishes
+    // Even if not found in our library, try to extract possible ingredients from dish name
+    const dishLower = dishName.toLowerCase();
+    let guessedIngredients = ['main protein', 'vegetables', 'seasonings', 'cooking oil'];
+    
+    // Smart ingredient guessing based on dish name
+    if (dishLower.includes('chicken')) guessedIngredients = ['chicken', 'onions', 'garlic', 'herbs', 'oil'];
+    else if (dishLower.includes('beef')) guessedIngredients = ['beef', 'onions', 'vegetables', 'seasonings'];
+    else if (dishLower.includes('pasta')) guessedIngredients = ['pasta', 'tomatoes', 'herbs', 'cheese', 'oil'];
+    else if (dishLower.includes('rice')) guessedIngredients = ['rice', 'vegetables', 'protein', 'seasonings'];
+    else if (dishLower.includes('fish')) guessedIngredients = ['fish', 'lemon', 'herbs', 'vegetables'];
+    else if (dishLower.includes('pizza')) guessedIngredients = ['pizza dough', 'tomato sauce', 'cheese', 'toppings'];
+    else if (dishLower.includes('soup')) guessedIngredients = ['broth', 'vegetables', 'protein', 'herbs'];
+    else if (dishLower.includes('salad')) guessedIngredients = ['lettuce', 'vegetables', 'dressing', 'toppings'];
+    
     return {
-      commonIngredients: ['main protein', 'vegetables', 'seasonings', 'cooking oil']
+      commonIngredients: guessedIngredients
     };
   };
 
@@ -474,7 +487,7 @@ Format your response as JSON:
             </div>
             <div className="p-4 rounded-2xl bg-primary/5 backdrop-blur-sm">
               <h1 className="text-6xl font-bold text-white">
-                KitchenChef
+                AiChef
               </h1>
               <p className="text-sm text-primary/70 font-medium mt-1">AI-Powered Recipe Generator</p>
             </div>

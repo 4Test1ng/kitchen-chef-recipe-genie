@@ -14,7 +14,7 @@ export interface OnlineRecipeResult {
 // Simulate online recipe search (in a real app, this would call a recipe API)
 export const searchRecipeOnline = async (dishName: string): Promise<OnlineRecipeResult[]> => {
   // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  await new Promise(resolve => setTimeout(resolve, 800));
   
   // Mock results based on dish name
   const mockResults: Record<string, OnlineRecipeResult[]> = {

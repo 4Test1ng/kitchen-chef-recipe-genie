@@ -161,6 +161,32 @@ All colors MUST be HSL.
   animation: bounce-gentle 2s infinite;
 }
 
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+@media (max-width: 768px) {
+  .container {
+    @apply px-4;
+  }
+  
+  .grid.lg\\:grid-cols-3 {
+    @apply grid-cols-1;
+  }
+  
+  .glass-card {
+    @apply mx-2;
+  }
+  
+  h1 {
+    @apply text-4xl;
+  }
+  
+  .text-6xl {
+    @apply text-4xl;
+  }
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -192,6 +218,15 @@ All colors MUST be HSL.
   }
   60% {
     transform: translateY(-5px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
   }
 }
 
