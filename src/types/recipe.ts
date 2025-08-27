@@ -21,4 +21,7 @@ export interface Recipe {
   };
   tags?: string[];
   createdAt: Date;
+  description?: string;
+  source?: string;
+  sourceUrl?: string;
 }

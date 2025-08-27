@@ -13,40 +13,9 @@ interface DishInputProps {
   className?: string;
 }
 
-const DISH_SUGGESTIONS = [
-  // Italian
-  "Spaghetti Carbonara", "Margherita Pizza", "Chicken Parmesan", "Fettuccine Alfredo", "Lasagna", "Risotto", "Osso Buco", "Tiramisu",
-  // Asian - Chinese
-  "Chicken Fried Rice", "Sweet and Sour Pork", "Kung Pao Chicken", "Beef and Broccoli", "Dumplings", "Hot Pot", "Peking Duck",
-  // Asian - Thai
-  "Pad Thai", "Green Curry", "Tom Yum Soup", "Massaman Curry", "Mango Sticky Rice", "Som Tam", "Thai Basil Stir Fry",
-  // Asian - Japanese
-  "Sushi Rolls", "Ramen", "Teriyaki Chicken", "Tempura", "Miso Soup", "Katsu Curry", "Yakitori", "Udon",
-  // Asian - Korean
-  "Kimchi Fried Rice", "Bulgogi", "Bibimbap", "Korean BBQ", "Japchae", "Tteokbokki",
-  // Asian - Indian
-  "Butter Chicken", "Chicken Curry", "Biryani", "Samosas", "Naan Bread", "Palak Paneer", "Tandoori Chicken", "Dal",
-  // American
-  "Grilled Cheese Sandwich", "Chocolate Chip Cookies", "Caesar Salad", "BBQ Ribs", "Mac and Cheese", "Buffalo Wings", "Apple Pie", "Cheeseburger",
-  // Mexican/Latin American
-  "Chicken Tacos", "Guacamole", "Quesadillas", "Enchiladas", "Burritos", "Fajitas", "Ceviche", "Churros", "Tamales",
-  // European - French
-  "Coq au Vin", "French Onion Soup", "Croissants", "Quiche Lorraine", "Beef Bourguignon", "Crème Brûlée", "Ratatouille",
-  // European - Spanish
-  "Paella", "Gazpacho", "Patatas Bravas", "Jamón Ibérico", "Tortilla Española", "Sangria",
-  // European - German
-  "Schnitzel", "Sauerbraten", "Pretzels", "Bratwurst", "Sauerkraut", "Black Forest Cake",
-  // European - Greek
-  "Moussaka", "Greek Salad", "Souvlaki", "Spanakopita", "Baklava", "Tzatziki",
-  // Middle Eastern
-  "Hummus", "Falafel", "Shawarma", "Kebabs", "Tabbouleh", "Baklava", "Stuffed Grape Leaves",
-  // African
-  "Couscous", "Tagine", "Jollof Rice", "Injera", "Bobotie", "Bunny Chow", "Moroccan Chicken",
-  // Australian/Oceanian
-  "Meat Pie", "Lamington", "Pavlova", "Fish and Chips", "Anzac Biscuits",
-  // Popular comfort foods
-  "Chicken Soup", "Pancakes", "French Toast", "Meatloaf", "Shepherd's Pie", "Fish and Chips", "Fried Chicken"
-];
+import { getDishSuggestions } from '@/data/dishLibrary';
+
+const DISH_SUGGESTIONS = getDishSuggestions();
 
 export const DishInput: React.FC<DishInputProps> = ({
   value,

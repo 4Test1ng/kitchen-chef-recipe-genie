@@ -18,8 +18,10 @@ import { StatCard } from '@/components/StatCard';
 
 import { Recipe, IngredientWithTiming } from '@/types/recipe';
 import { SearchMode } from '@/types/dish';
+import { searchDishes, CONTINENTAL_DISHES } from '@/data/dishLibrary';
+import { searchRecipeOnline, convertOnlineRecipeToRecipe, isOnline } from '@/utils/onlineSearch';
 
-const KitchenChef = () => {
+const AiChef = () => {
   const [searchMode, setSearchMode] = useState<SearchMode>('ingredients');
   const [ingredients, setIngredients] = useState('');
   const [dishName, setDishName] = useState('');
@@ -226,99 +228,69 @@ Format your response as JSON:
     };
   };
 
-  // Generate recipe from dish name
+  // Enhanced recipe generation from dish name with online search
   const generateRecipeFromDish = async (dish: string): Promise<Recipe> => {
     const dishData = getDishData(dish);
+    
+    // If we have dish data from our library, use it
+    if (dishData.dishData) {
+      const libraryDish = dishData.dishData;
+      return {
+        id: Date.now().toString(),
+        title: libraryDish.name,
+        cookTime: libraryDish.cookTime,
+        difficulty: libraryDish.difficulty,
+        servings: libraryDish.servings,
+        instructions: libraryDish.instructions,
+        ingredients: libraryDish.ingredients,
+        ingredientsWithTiming: libraryDish.ingredients.map(ingredient => ({
+          name: ingredient,
+          cookingTime: '5-10 minutes',
+          cookingMethod: 'prepare as needed'
+        })),
+        nutrition: {
+          calories: 400,
+          protein: '25g',
+          carbs: '30g',
+          fat: '15g'
+        },
+        tags: [...libraryDish.tags, 'authentic', libraryDish.cuisine.toLowerCase()],
+        createdAt: new Date(),
+        description: libraryDish.description
+      };
+    }
+    
+    // If online and dish not in library, try online search
+    if (isOnline()) {
+      try {
+        const onlineResults = await searchRecipeOnline(dish);
+        if (onlineResults.length > 0) {
+          const onlineRecipe = convertOnlineRecipeToRecipe(onlineResults[0], dish);
+          toast({
+            title: "Recipe found online!",
+            description: `Found ${dish} recipe from ${onlineResults[0].source}`,
+          });
+          return onlineRecipe;
+        }
+      } catch (error) {
+        console.error('Online recipe search failed:', error);
+      }
+    }
+    
+    // Fallback to generated recipe
     return generateRecipe(dishData.commonIngredients);
   };
 
-  // Knowledge base for popular dishes
+  // Enhanced dish data lookup using comprehensive library
   const getDishData = (dishName: string) => {
-    const dishLower = dishName.toLowerCase();
+    const dishResults = searchDishes(dishName);
     
-    // Expanded dish knowledge base with international cuisine
-    const dishDatabase: Record<string, string[]> = {
-      // Italian
-      'spaghetti carbonara': ['spaghetti', 'eggs', 'bacon', 'parmesan cheese', 'black pepper'],
-      'margherita pizza': ['pizza dough', 'tomato sauce', 'mozzarella cheese', 'basil'],
-      'chicken parmesan': ['chicken', 'breadcrumbs', 'parmesan cheese', 'tomato sauce'],
-      'lasagna': ['lasagna noodles', 'ground beef', 'cheese', 'tomato sauce'],
-      'risotto': ['arborio rice', 'broth', 'parmesan cheese', 'onions', 'white wine'],
-      
-      // Asian - Chinese
-      'chicken fried rice': ['chicken', 'rice', 'eggs', 'soy sauce', 'vegetables'],
-      'sweet and sour pork': ['pork', 'pineapple', 'bell peppers', 'vinegar', 'sugar'],
-      'kung pao chicken': ['chicken', 'peanuts', 'chili peppers', 'soy sauce', 'garlic'],
-      'beef and broccoli': ['beef', 'broccoli', 'soy sauce', 'garlic', 'ginger'],
-      
-      // Asian - Thai
-      'pad thai': ['rice noodles', 'shrimp', 'eggs', 'peanuts', 'bean sprouts'],
-      'green curry': ['chicken', 'coconut milk', 'green curry paste', 'thai basil', 'eggplant'],
-      'tom yum soup': ['shrimp', 'lemongrass', 'lime leaves', 'mushrooms', 'chili'],
-      
-      // Asian - Japanese
-      'ramen': ['ramen noodles', 'broth', 'eggs', 'vegetables', 'meat'],
-      'teriyaki chicken': ['chicken', 'soy sauce', 'mirin', 'sugar', 'ginger'],
-      'sushi rolls': ['sushi rice', 'nori', 'fish', 'vegetables', 'wasabi'],
-      
-      // Asian - Korean
-      'kimchi fried rice': ['rice', 'kimchi', 'pork', 'eggs', 'sesame oil'],
-      'bulgogi': ['beef', 'soy sauce', 'pear', 'garlic', 'sesame oil'],
-      'bibimbap': ['rice', 'vegetables', 'beef', 'egg', 'gochujang'],
-      
-      // Asian - Indian
-      'butter chicken': ['chicken', 'tomatoes', 'cream', 'butter', 'spices'],
-      'chicken curry': ['chicken', 'onions', 'tomatoes', 'curry spices', 'coconut milk'],
-      'biryani': ['rice', 'chicken', 'onions', 'spices', 'yogurt'],
-      
-      // Mexican/Latin American
-      'chicken tacos': ['chicken', 'tortillas', 'lettuce', 'tomatoes', 'cheese'],
-      'quesadillas': ['tortillas', 'cheese', 'chicken', 'peppers', 'onions'],
-      'enchiladas': ['tortillas', 'chicken', 'cheese', 'enchilada sauce', 'onions'],
-      'paella': ['rice', 'seafood', 'chicken', 'saffron', 'vegetables'],
-      
-      // European - French
-      'coq au vin': ['chicken', 'red wine', 'mushrooms', 'bacon', 'onions'],
-      'french onion soup': ['onions', 'beef broth', 'cheese', 'bread', 'butter'],
-      'beef bourguignon': ['beef', 'red wine', 'mushrooms', 'carrots', 'onions'],
-      
-      // European - German
-      'schnitzel': ['pork', 'breadcrumbs', 'eggs', 'flour', 'lemon'],
-      'sauerbraten': ['beef', 'vinegar', 'vegetables', 'spices', 'gravy'],
-      
-      // European - Greek
-      'moussaka': ['eggplant', 'ground lamb', 'bechamel sauce', 'tomatoes', 'cheese'],
-      'souvlaki': ['pork', 'olive oil', 'lemon', 'oregano', 'garlic'],
-      
-      // Middle Eastern
-      'shawarma': ['lamb', 'pita bread', 'tahini', 'vegetables', 'spices'],
-      'falafel': ['chickpeas', 'herbs', 'spices', 'onions', 'garlic'],
-      'hummus': ['chickpeas', 'tahini', 'lemon', 'garlic', 'olive oil'],
-      
-      // African
-      'jollof rice': ['rice', 'tomatoes', 'onions', 'spices', 'chicken'],
-      'tagine': ['chicken', 'vegetables', 'spices', 'olives', 'preserved lemons'],
-      
-      // American classics
-      'caesar salad': ['lettuce', 'parmesan cheese', 'croutons', 'caesar dressing'],
-      'grilled cheese': ['bread', 'cheese', 'butter'],
-      'pancakes': ['flour', 'eggs', 'milk', 'sugar', 'baking powder'],
-      'chocolate chip cookies': ['flour', 'butter', 'sugar', 'eggs', 'chocolate chips'],
-      'fish and chips': ['fish', 'potatoes', 'flour', 'oil'],
-      'mac and cheese': ['pasta', 'cheese', 'milk', 'butter', 'flour']
-    };
-
-    // Find exact match or partial match
-    const exactMatch = dishDatabase[dishLower];
-    if (exactMatch) {
-      return { commonIngredients: exactMatch };
-    }
-
-    // Fuzzy matching for common dish patterns
-    for (const [dish, ingredients] of Object.entries(dishDatabase)) {
-      if (dish.includes(dishLower) || dishLower.includes(dish)) {
-        return { commonIngredients: ingredients };
-      }
+    if (dishResults.length > 0) {
+      const dish = dishResults[0];
+      return { 
+        commonIngredients: dish.ingredients,
+        dishData: dish
+      };
     }
 
     // Default ingredients for unknown dishes
@@ -808,4 +780,4 @@ Format your response as JSON:
   );
 };
 
-export default KitchenChef;
+export default AiChef;
