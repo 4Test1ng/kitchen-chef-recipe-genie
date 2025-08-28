@@ -92,7 +92,7 @@ export const DishInput: React.FC<DishInputProps> = ({
       </div>
       
       {isOpen && (
-        <div className="absolute z-[9999] w-full mt-1 bg-card dark:bg-card border border-border rounded-md shadow-2xl animate-fade-in backdrop-blur-sm">
+        <div className="absolute z-[9999] w-full bottom-full mb-1 bg-card dark:bg-card border border-border rounded-md shadow-2xl animate-fade-in backdrop-blur-sm">
           <ScrollArea className="max-h-60">
             <div className="p-2">
               {filteredSuggestions.length > 0 ? (
