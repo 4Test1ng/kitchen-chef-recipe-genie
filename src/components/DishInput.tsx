@@ -92,7 +92,7 @@ export const DishInput: React.FC<DishInputProps> = ({
       </div>
       
       {isOpen && (
-        <div className="absolute z-[100] w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-xl animate-fade-in">
+        <div className="absolute z-[9999] w-full mt-1 bg-card dark:bg-card border border-border rounded-md shadow-2xl animate-fade-in backdrop-blur-sm">
           <ScrollArea className="max-h-60">
             <div className="p-2">
               {filteredSuggestions.length > 0 ? (
@@ -100,7 +100,7 @@ export const DishInput: React.FC<DishInputProps> = ({
                   {filteredSuggestions.map((dish, index) => (
                     <button
                       key={index}
-                      className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-2 bg-white dark:bg-gray-800"
+                      className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-accent transition-colors flex items-center gap-2 bg-card text-card-foreground"
                       onClick={() => handleSuggestionClick(dish)}
                     >
                       <ChefHat className="w-4 h-4 text-gray-500" />
@@ -109,7 +109,7 @@ export const DishInput: React.FC<DishInputProps> = ({
                   ))}
                 </div>
               ) : (
-                <div className="px-3 py-4 text-sm text-gray-500 text-center bg-white dark:bg-gray-800 rounded-md">
+                <div className="px-3 py-4 text-sm text-muted-foreground text-center bg-card rounded-md">
                   No dishes found. Try typing a different dish name.
                 </div>
               )}
