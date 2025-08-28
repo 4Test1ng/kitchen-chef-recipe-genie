@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChefHat, Clock, Heart, History, Sparkles, Plus, TrendingUp, Users, Star, BookOpen, X, Utensils } from 'lucide-react';
+import { ChefHat, Clock, Heart, History, Sparkles, Plus, TrendingUp, Users, Star, BookOpen, X, Utensils, Globe } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { RecipeCard } from '@/components/RecipeCard';
 import { RecipeImproveDialog } from '@/components/RecipeImproveDialog';
@@ -22,6 +23,7 @@ import { searchDishes, CONTINENTAL_DISHES } from '@/data/dishLibrary';
 import { searchRecipeOnline, convertOnlineRecipeToRecipe, isOnline } from '@/utils/onlineSearch';
 
 const AiChef = () => {
+  const navigate = useNavigate();
   const [searchMode, setSearchMode] = useState<SearchMode>('ingredients');
   const [ingredients, setIngredients] = useState('');
   const [dishName, setDishName] = useState('');
@@ -495,6 +497,18 @@ Format your response as JSON:
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Transform your available ingredients into amazing, personalized recipes with the power of artificial intelligence
           </p>
+          
+          {/* World Recipe Booklet Link */}
+          <div className="mt-8">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/recipe-booklet')}
+              className="bg-background/10 border-accent/30 hover:bg-accent/20 hover:border-accent/50 text-accent-foreground backdrop-blur-sm transition-all duration-300"
+            >
+              <Globe className="w-4 h-4 mr-2" />
+              Explore World Continental Recipe Booklet
+            </Button>
+          </div>
         </div>
 
         {/* Stats Dashboard */}

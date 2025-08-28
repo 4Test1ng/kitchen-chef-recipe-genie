@@ -437,6 +437,354 @@ export const CONTINENTAL_DISHES: Record<string, DishData> = {
     ],
     description: 'Popular West African one-pot rice dish',
     tags: ['rice', 'African', 'one-pot', 'spicy', 'tomato-based']
+  },
+
+  'bobotie': {
+    name: 'Bobotie',
+    cuisine: 'South African',
+    difficulty: 'Medium',
+    cookTime: '1 hour',
+    servings: 6,
+    ingredients: ['ground beef', 'onion', 'curry powder', 'bread', 'milk', 'eggs', 'raisins', 'bay leaves'],
+    instructions: [
+      'Fry onion until golden',
+      'Add ground beef and curry powder, cook until browned',
+      'Soak bread in milk, squeeze out excess',
+      'Stir bread and raisins into meat mixture',
+      'Place in baking dish',
+      'Beat eggs with remaining milk',
+      'Pour egg mixture over meat',
+      'Top with bay leaves and bake at 350°F for 45 minutes until set'
+    ],
+    description: 'Traditional South African spiced meat casserole with custard topping',
+    tags: ['casserole', 'South African', 'spiced', 'comfort food', 'traditional']
+  },
+
+  'tagine': {
+    name: 'Moroccan Tagine',
+    cuisine: 'Moroccan',
+    difficulty: 'Medium',
+    cookTime: '2 hours',
+    servings: 6,
+    ingredients: ['lamb or chicken', 'onion', 'garlic', 'ginger', 'saffron', 'dried apricots', 'almonds', 'cinnamon', 'stock'],
+    instructions: [
+      'Sear meat pieces until browned',
+      'Add onions, garlic, and ginger, cook until soft',
+      'Add spices including saffron and cinnamon',
+      'Add enough stock to cover',
+      'Add dried apricots and almonds',
+      'Cover and simmer on low heat for 1.5-2 hours until meat is tender',
+      'Adjust seasoning and serve with couscous'
+    ],
+    description: 'Slow-cooked Moroccan stew with meat, dried fruits, and aromatic spices',
+    tags: ['stew', 'Moroccan', 'slow-cooked', 'aromatic', 'dried fruits']
+  },
+
+  // === EXPANDED ASIAN CUISINE ===
+  'chicken biryani': {
+    name: 'Chicken Biryani',
+    cuisine: 'Indian',
+    difficulty: 'Hard',
+    cookTime: '1.5 hours',
+    servings: 6,
+    ingredients: ['basmati rice', 'chicken', 'onions', 'yogurt', 'tomatoes', 'garam masala', 'saffron', 'mint', 'coriander', 'ghee'],
+    instructions: [
+      'Marinate chicken in yogurt and spices for 30 minutes',
+      'Cook chicken with spices until tender',
+      'Parboil basmati rice with whole spices',
+      'Fry onions until golden and crispy',
+      'Layer rice and chicken alternately in pot',
+      'Top with fried onions, mint, and saffron soaked in milk',
+      'Cover tightly and steam on low heat for 45 minutes',
+      'Let rest 10 minutes before serving'
+    ],
+    description: 'Aromatic Indian rice dish with spiced chicken and fragrant herbs',
+    tags: ['rice', 'Indian', 'aromatic', 'layered', 'festive']
+  },
+
+  'sushi': {
+    name: 'Sushi Rolls',
+    cuisine: 'Japanese',
+    difficulty: 'Hard',
+    cookTime: '45 minutes',
+    servings: 4,
+    ingredients: ['sushi rice', 'rice vinegar', 'sugar', 'nori sheets', 'raw fish', 'cucumber', 'avocado', 'wasabi', 'soy sauce'],
+    instructions: [
+      'Cook sushi rice and let cool',
+      'Season rice with vinegar, sugar, and salt mixture',
+      'Place nori sheet on bamboo mat',
+      'Spread rice evenly on nori, leaving border at top',
+      'Add fish and vegetables in a line',
+      'Roll tightly using bamboo mat',
+      'Wet knife and slice into pieces',
+      'Serve with wasabi, soy sauce, and pickled ginger'
+    ],
+    description: 'Traditional Japanese rice rolls with raw fish and vegetables',
+    tags: ['rice', 'Japanese', 'raw fish', 'technique-heavy', 'fresh']
+  },
+
+  // === EXPANDED EUROPEAN CUISINE ===
+  'beef stroganoff': {
+    name: 'Beef Stroganoff',
+    cuisine: 'Russian',
+    difficulty: 'Medium',
+    cookTime: '30 minutes',
+    servings: 4,
+    ingredients: ['beef strips', 'mushrooms', 'onions', 'sour cream', 'mustard', 'beef stock', 'flour', 'butter'],
+    instructions: [
+      'Season and quickly fry beef strips, remove and set aside',
+      'Cook onions until translucent',
+      'Add mushrooms and cook until golden',
+      'Sprinkle flour and cook for 1 minute',
+      'Gradually add beef stock, stirring constantly',
+      'Stir in mustard and sour cream',
+      'Return beef to pan and simmer briefly',
+      'Serve immediately with pasta or rice'
+    ],
+    description: 'Classic Russian dish with tender beef in creamy mushroom sauce',
+    tags: ['beef', 'Russian', 'creamy', 'mushrooms', 'comfort food']
+  },
+
+  // === NORTH AMERICAN CUISINE ===
+  'buffalo wings': {
+    name: 'Buffalo Wings',
+    cuisine: 'American',
+    difficulty: 'Easy',
+    cookTime: '25 minutes',
+    servings: 4,
+    ingredients: ['chicken wings', 'hot sauce', 'butter', 'garlic', 'cayenne pepper', 'celery', 'blue cheese dressing'],
+    instructions: [
+      'Preheat oven to 425°F',
+      'Season wings with salt and pepper',
+      'Bake wings for 20-25 minutes until crispy',
+      'Mix hot sauce with melted butter and garlic',
+      'Toss cooked wings in sauce mixture',
+      'Serve immediately with celery sticks and blue cheese dressing'
+    ],
+    description: 'Spicy American chicken wings with tangy hot sauce',
+    tags: ['chicken', 'American', 'spicy', 'party food', 'wings']
+  },
+
+  'poutine': {
+    name: 'Poutine',
+    cuisine: 'Canadian',
+    difficulty: 'Easy',
+    cookTime: '15 minutes',
+    servings: 4,
+    ingredients: ['french fries', 'cheese curds', 'brown gravy', 'beef stock', 'flour', 'butter'],
+    instructions: [
+      'Prepare crispy french fries',
+      'Make gravy with butter, flour, and beef stock',
+      'Place hot fries in serving dishes',
+      'Top generously with fresh cheese curds',
+      'Pour hot gravy over fries and curds',
+      'Serve immediately while cheese is melting'
+    ],
+    description: 'Canadian dish of fries topped with cheese curds and gravy',
+    tags: ['fries', 'Canadian', 'comfort food', 'cheese', 'indulgent']
+  },
+
+  'mexican tacos': {
+    name: 'Authentic Mexican Tacos',
+    cuisine: 'Mexican',
+    difficulty: 'Easy',
+    cookTime: '20 minutes',
+    servings: 4,
+    ingredients: ['corn tortillas', 'beef or chicken', 'white onion', 'cilantro', 'lime', 'salsa verde', 'mexican cheese'],
+    instructions: [
+      'Season and cook meat until tender',
+      'Warm corn tortillas on griddle',
+      'Dice onions finely',
+      'Chop cilantro',
+      'Fill tortillas with meat',
+      'Top with onions, cilantro, and cheese',
+      'Serve with lime wedges and salsa verde'
+    ],
+    description: 'Traditional Mexican street tacos with simple, fresh ingredients',
+    tags: ['tacos', 'Mexican', 'street food', 'authentic', 'fresh']
+  },
+
+  // === SOUTH AMERICAN CUISINE ===
+  'feijoada': {
+    name: 'Feijoada',
+    cuisine: 'Brazilian',
+    difficulty: 'Hard',
+    cookTime: '3 hours',
+    servings: 8,
+    ingredients: ['black beans', 'pork shoulder', 'sausage', 'bacon', 'onion', 'garlic', 'bay leaves', 'orange zest'],
+    instructions: [
+      'Soak black beans overnight',
+      'Brown pork and sausages',
+      'Sauté onions and garlic',
+      'Add beans, meats, and bay leaves to pot',
+      'Cover with water and simmer for 2-3 hours',
+      'Add orange zest in last 30 minutes',
+      'Serve with rice, collard greens, and orange slices'
+    ],
+    description: 'Traditional Brazilian black bean stew with mixed meats',
+    tags: ['beans', 'Brazilian', 'stew', 'hearty', 'traditional']
+  },
+
+  'empanadas': {
+    name: 'Empanadas',
+    cuisine: 'Argentine',
+    difficulty: 'Medium',
+    cookTime: '45 minutes',
+    servings: 6,
+    ingredients: ['empanada dough', 'ground beef', 'onions', 'hard-boiled eggs', 'olives', 'cumin', 'paprika', 'egg wash'],
+    instructions: [
+      'Cook onions until golden',
+      'Add ground beef and spices, cook until done',
+      'Let filling cool, then mix in chopped eggs and olives',
+      'Roll out dough and cut into circles',
+      'Fill circles with meat mixture',
+      'Fold and crimp edges to seal',
+      'Brush with egg wash and bake at 375°F for 20-25 minutes'
+    ],
+    description: 'Argentine pastries filled with seasoned meat and vegetables',
+    tags: ['pastry', 'Argentine', 'handheld', 'baked', 'savory']
+  },
+
+  'ceviche': {
+    name: 'Ceviche',
+    cuisine: 'Peruvian',
+    difficulty: 'Easy',
+    cookTime: '20 minutes',
+    servings: 4,
+    ingredients: ['fresh white fish', 'lime juice', 'red onion', 'cilantro', 'aji amarillo', 'sweet potato', 'corn'],
+    instructions: [
+      'Cut fish into small cubes',
+      'Marinate fish in lime juice for 15-20 minutes until opaque',
+      'Slice red onion very thinly',
+      'Chop cilantro and aji amarillo',
+      'Mix fish with onions, herbs, and pepper',
+      'Season with salt',
+      'Serve with boiled sweet potato and corn'
+    ],
+    description: 'Peruvian raw fish dish "cooked" in citrus juice',
+    tags: ['seafood', 'Peruvian', 'raw', 'citrus', 'fresh']
+  },
+
+  // === OCEANIA CUISINE ===
+  'meat pie': {
+    name: 'Australian Meat Pie',
+    cuisine: 'Australian',
+    difficulty: 'Medium',
+    cookTime: '1 hour',
+    servings: 4,
+    ingredients: ['ground beef', 'onions', 'beef stock', 'flour', 'puff pastry', 'worcestershire sauce', 'tomato sauce'],
+    instructions: [
+      'Cook onions until soft',
+      'Add ground beef and brown',
+      'Sprinkle flour and cook for 1 minute',
+      'Add stock and worcestershire sauce',
+      'Simmer until thick',
+      'Fill pastry cases with meat mixture',
+      'Top with pastry, brush with egg',
+      'Bake at 400°F for 25-30 minutes until golden'
+    ],
+    description: 'Classic Australian hand-held pastry filled with seasoned minced meat',
+    tags: ['pastry', 'Australian', 'handheld', 'comfort food', 'meat']
+  },
+
+  'pavlova': {
+    name: 'Pavlova',
+    cuisine: 'New Zealand',
+    difficulty: 'Hard',
+    cookTime: '1.5 hours',
+    servings: 8,
+    ingredients: ['egg whites', 'caster sugar', 'cornstarch', 'white vinegar', 'whipped cream', 'fresh berries', 'kiwi fruit'],
+    instructions: [
+      'Beat egg whites until soft peaks form',
+      'Gradually add sugar until stiff and glossy',
+      'Fold in cornstarch and vinegar',
+      'Shape into circle on parchment paper',
+      'Bake at 300°F for 1 hour, then cool in oven',
+      'Top with whipped cream and fresh fruit',
+      'Serve immediately'
+    ],
+    description: 'Light meringue dessert topped with cream and fresh fruit',
+    tags: ['dessert', 'New Zealand', 'meringue', 'fresh fruit', 'elegant']
+  },
+
+  'lamingtons': {
+    name: 'Lamingtons',
+    cuisine: 'Australian',
+    difficulty: 'Medium',
+    cookTime: '30 minutes',
+    servings: 12,
+    ingredients: ['sponge cake', 'chocolate icing', 'desiccated coconut', 'butter', 'powdered sugar', 'cocoa powder'],
+    instructions: [
+      'Cut sponge cake into cubes',
+      'Make chocolate icing with butter, powdered sugar, and cocoa',
+      'Dip each cake cube in chocolate icing',
+      'Roll in desiccated coconut immediately',
+      'Place on wire rack to set',
+      'Store in airtight container'
+    ],
+    description: 'Australian sponge cake squares coated in chocolate and coconut',
+    tags: ['dessert', 'Australian', 'chocolate', 'coconut', 'sweet']
+  },
+
+  // === ANTARCTICA SURVIVAL FOODS ===
+  'pemmican': {
+    name: 'Pemmican',
+    cuisine: 'Polar Survival',
+    difficulty: 'Medium',
+    cookTime: '2 hours',
+    servings: 10,
+    ingredients: ['dried meat', 'animal fat', 'dried berries', 'salt'],
+    instructions: [
+      'Pound dried meat into fine powder',
+      'Melt animal fat gently',
+      'Mix meat powder with melted fat',
+      'Add dried berries and salt',
+      'Form into blocks or bars',
+      'Let cool and solidify',
+      'Store in waterproof containers'
+    ],
+    description: 'High-energy survival food made from dried meat, fat, and berries',
+    tags: ['survival', 'preserved', 'high-energy', 'explorer food', 'traditional']
+  },
+
+  'hardtack': {
+    name: 'Hardtack',
+    cuisine: 'Survival',
+    difficulty: 'Easy',
+    cookTime: '30 minutes',
+    servings: 20,
+    ingredients: ['flour', 'water', 'salt'],
+    instructions: [
+      'Mix flour, water, and salt into stiff dough',
+      'Roll dough to 1/2 inch thickness',
+      'Cut into 3-inch squares',
+      'Poke holes throughout with nail',
+      'Bake at 375°F for 30 minutes',
+      'Cool completely until very hard',
+      'Store in airtight containers'
+    ],
+    description: 'Long-lasting preserved bread for extreme conditions',
+    tags: ['survival', 'preserved', 'simple', 'long-lasting', 'hardtack']
+  },
+
+  'bannock': {
+    name: 'Bannock Bread',
+    cuisine: 'Polar',
+    difficulty: 'Easy',
+    cookTime: '15 minutes',
+    servings: 4,
+    ingredients: ['flour', 'baking powder', 'water', 'fat or oil', 'salt'],
+    instructions: [
+      'Mix flour, baking powder, and salt',
+      'Add water and fat to form dough',
+      'Knead briefly until smooth',
+      'Shape into flat round',
+      'Cook on hot pan or griddle',
+      'Flip when bottom is golden brown',
+      'Cook until both sides are done'
+    ],
+    description: 'Simple flat bread that can be cooked on a pan in harsh conditions',
+    tags: ['bread', 'polar', 'simple', 'quick', 'survival']
   }
 };
 
