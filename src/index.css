@@ -187,6 +187,63 @@ All colors MUST be HSL.
   }
 }
 
+/* Enhanced Media Queries for full mobile responsiveness */
+@media (max-width: 375px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  h1 { font-size: 1.875rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+  
+  .text-4xl { font-size: 2rem; }
+  .text-3xl { font-size: 1.75rem; }
+  .text-2xl { font-size: 1.5rem; }
+}
+
+@media (max-width: 640px) {
+  .grid-cols-auto-fit {
+    grid-template-columns: 1fr;
+  }
+  
+  .space-y-mobile > * + * {
+    margin-top: 1rem;
+  }
+  
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-stack {
+    flex-direction: column;
+  }
+  
+  .mobile-full {
+    width: 100%;
+  }
+  
+  .mobile-text-center {
+    text-align: center;
+  }
+}
+
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* Grid pattern for hero background */
+.bg-grid-pattern {
+  background-image: radial-gradient(circle, hsl(var(--muted-foreground)) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

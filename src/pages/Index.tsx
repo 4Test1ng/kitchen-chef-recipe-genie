@@ -488,27 +488,15 @@ Format your response as JSON:
               <ChefHat className="w-10 h-10 text-primary" />
             </div>
             <div className="p-4 rounded-2xl bg-primary/5 backdrop-blur-sm">
-              <h1 className="text-6xl font-bold text-white">
-                AiChef
+              <h1 className="text-4xl sm:text-6xl font-bold text-foreground">
+                Recipe Generator
               </h1>
-              <p className="text-sm text-primary/70 font-medium mt-1">AI-Powered Recipe Generator</p>
+              <p className="text-sm text-muted-foreground font-medium mt-1">AI-Powered Recipe Creation</p>
             </div>
           </div>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Transform your available ingredients into amazing, personalized recipes with the power of artificial intelligence
           </p>
-          
-          {/* World Recipe Booklet Link */}
-          <div className="mt-8">
-            <Button
-              variant="outline"
-              onClick={() => navigate('/recipe-booklet')}
-              className="bg-background/10 border-accent/30 hover:bg-accent/20 hover:border-accent/50 text-accent-foreground backdrop-blur-sm transition-all duration-300"
-            >
-              <Globe className="w-4 h-4 mr-2" />
-              Explore World Continental Recipe Booklet
-            </Button>
-          </div>
         </div>
 
         {/* Stats Dashboard */}
