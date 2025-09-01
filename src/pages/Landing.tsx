@@ -43,7 +43,7 @@ const Landing = () => {
             
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-foreground mb-6 animate-fade-in">
               Transform Your
-              <span className="text-white"> Kitchen </span>
+              <span className="bg-gradient-to-r from-purple-500 to-purple-700 bg-clip-text text-transparent"> Kitchen </span>
               with AI
             </h1>
             
