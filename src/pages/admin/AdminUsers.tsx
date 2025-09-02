@@ -21,6 +21,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Search, MoreHorizontal, UserPlus, Mail, Ban, Shield } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import UserForm from "@/features/users/components/UserForm";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 // Mock users data
 const mockUsers = [
@@ -75,8 +78,14 @@ const mockUsers = [
 ];
 
 const AdminUsers = () => {
-  const [users] = useState(mockUsers);
+  const [users, setUsers] = useState(mockUsers);
   const [searchTerm, setSearchTerm] = useState("");
+  const { toast } = useToast();
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<typeof mockUsers[number] | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const filteredUsers = users.filter(user =>
     user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -86,6 +95,50 @@ const AdminUsers = () => {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
+  };
+
+  const handleCreate = (values: any) => {
+    const nextId = users.length ? Math.max(...users.map(u => u.id)) + 1 : 1;
+    const newUser = {
+      id: nextId,
+      email: values.email,
+      first_name: values.first_name,
+      last_name: values.last_name,
+      role: values.role,
+      is_active: values.is_active,
+      email_verified: values.email_verified,
+      created_at: new Date().toISOString(),
+      last_login: new Date().toISOString(),
+      recipes_count: 0,
+    } as typeof mockUsers[number];
+    setUsers(prev => [newUser, ...prev]);
+    setCreateOpen(false);
+    toast({ title: "User created" });
+  };
+
+  const handleEdit = (values: any) => {
+    if (!selectedUser) return;
+    setUsers(prev => prev.map(u => (u.id === selectedUser.id ? { ...u, ...values } : u)));
+    setEditOpen(false);
+    setSelectedUser(null);
+    toast({ title: "User updated" });
+  };
+
+  const toggleActive = (id: number) => {
+    setUsers(prev => prev.map(u => (u.id === id ? { ...u, is_active: !u.is_active } : u)));
+  };
+
+  const handleAskDelete = (user: typeof mockUsers[number]) => {
+    setSelectedUser(user);
+    setDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!selectedUser) return;
+    setUsers(prev => prev.filter(u => u.id !== selectedUser.id));
+    setDeleteOpen(false);
+    setSelectedUser(null);
+    toast({ title: "User deleted" });
   };
 
   return (
@@ -264,6 +317,31 @@ const AdminUsers = () => {
           </Table>
         </CardContent>
       </Card>
+
+      <UserForm
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        mode="create"
+        onSubmit={handleCreate}
+      />
+      <UserForm
+        open={editOpen}
+        onOpenChange={(o) => {
+          if (!o) setSelectedUser(null);
+          setEditOpen(o);
+        }}
+        mode="edit"
+        initialData={selectedUser ?? undefined}
+        onSubmit={handleEdit}
+      />
+      <ConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Delete user"
+        description="This action cannot be undone."
+        confirmLabel="Delete"
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 };

@@ -27,6 +27,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, MoreHorizontal, Plus, Clock, Users, Star } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import DishForm from "@/features/dishes/components/DishForm";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 // Mock dishes data
 const mockDishes = [
@@ -96,10 +99,11 @@ const continents = ["All", "Africa", "Asia", "Europe", "North America", "South A
 const difficulties = ["All", "Easy", "Medium", "Hard"];
 
 const AdminDishes = () => {
-  const [dishes] = useState(mockDishes);
+  const [dishes, setDishes] = useState(mockDishes);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedContinent, setSelectedContinent] = useState("All");
   const [selectedDifficulty, setSelectedDifficulty] = useState("All");
+  const { toast } = useToast();
 
   const filteredDishes = dishes.filter(dish => {
     const matchesSearch = dish.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -117,6 +121,52 @@ const AdminDishes = () => {
       case 'Hard': return 'destructive';
       default: return 'outline';
     }
+  };
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [selectedDish, setSelectedDish] = useState<typeof mockDishes[number] | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const handleCreate = (values: any) => {
+    const nextId = dishes.length ? Math.max(...dishes.map(d => d.id)) + 1 : 1;
+    const newDish = {
+      id: nextId,
+      ...values,
+      created_at: new Date().toISOString(),
+    } as typeof mockDishes[number];
+    setDishes(prev => [newDish, ...prev]);
+    setCreateOpen(false);
+    toast({ title: "Dish created" });
+  };
+
+  const handleEdit = (values: any) => {
+    if (!selectedDish) return;
+    setDishes(prev => prev.map(d => (d.id === selectedDish.id ? { ...d, ...values } : d)));
+    setEditOpen(false);
+    setSelectedDish(null);
+    toast({ title: "Dish updated" });
+  };
+
+  const handleAskDelete = (dish: typeof mockDishes[number]) => {
+    setSelectedDish(dish);
+    setDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!selectedDish) return;
+    setDishes(prev => prev.filter(d => d.id !== selectedDish.id));
+    setDeleteOpen(false);
+    setSelectedDish(null);
+    toast({ title: "Dish deleted" });
+  };
+
+  const toggleActive = (id: number) => {
+    setDishes(prev => prev.map(d => (d.id === id ? { ...d, is_active: !d.is_active } : d)));
+  };
+
+  const toggleFeatured = (id: number) => {
+    setDishes(prev => prev.map(d => (d.id === id ? { ...d, is_featured: !d.is_featured } : d)));
   };
 
   return (
@@ -312,6 +362,31 @@ const AdminDishes = () => {
           </Table>
         </CardContent>
       </Card>
+
+      <DishForm
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        mode="create"
+        onSubmit={handleCreate}
+      />
+      <DishForm
+        open={editOpen}
+        onOpenChange={(o) => {
+          if (!o) setSelectedDish(null);
+          setEditOpen(o);
+        }}
+        mode="edit"
+        initialData={selectedDish ?? undefined}
+        onSubmit={handleEdit}
+      />
+      <ConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Delete dish"
+        description="This action cannot be undone."
+        confirmLabel="Delete"
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 };
