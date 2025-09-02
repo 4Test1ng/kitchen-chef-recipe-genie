@@ -194,7 +194,7 @@ const AdminUsers = () => {
                 Manage and monitor user accounts
               </CardDescription>
             </div>
-            <Button>
+            <Button onClick={() => setCreateOpen(true)}>
               <UserPlus className="mr-2 h-4 w-4" />
               Add User
             </Button>
@@ -291,11 +291,14 @@ const AdminUsers = () => {
                         <DropdownMenuItem>
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          setSelectedUser(user);
+                          setEditOpen(true);
+                        }}>
                           Edit User
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toggleActive(user.id)}>
                           {user.is_active ? (
                             <>
                               <Ban className="mr-2 h-4 w-4" />
@@ -305,7 +308,10 @@ const AdminUsers = () => {
                             'Activate'
                           )}
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem 
+                          className="text-destructive"
+                          onClick={() => handleAskDelete(user)}
+                        >
                           Delete User
                         </DropdownMenuItem>
                       </DropdownMenuContent>

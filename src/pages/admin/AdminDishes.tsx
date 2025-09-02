@@ -222,7 +222,7 @@ const AdminDishes = () => {
                 Manage continental dishes and recipes
               </CardDescription>
             </div>
-            <Button>
+            <Button onClick={() => setCreateOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
               Add Dish
             </Button>
@@ -339,18 +339,24 @@ const AdminDishes = () => {
                         <DropdownMenuItem>
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          setSelectedDish(dish);
+                          setEditOpen(true);
+                        }}>
                           Edit Dish
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toggleFeatured(dish.id)}>
                           {dish.is_featured ? 'Remove from Featured' : 'Make Featured'}
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toggleActive(dish.id)}>
                           {dish.is_active ? 'Deactivate' : 'Activate'}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem 
+                          className="text-destructive"
+                          onClick={() => handleAskDelete(dish)}
+                        >
                           Delete Dish
                         </DropdownMenuItem>
                       </DropdownMenuContent>
