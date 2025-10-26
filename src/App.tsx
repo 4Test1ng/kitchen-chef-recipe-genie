@@ -30,8 +30,8 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <CookieConsent />
         <BrowserRouter>
+          <CookieConsent />
           <Routes>
             {/* Auth Routes */}
             <Route path="/login" element={<Login />} />
