@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import AdminLayout from "./components/layout/AdminLayout";
 import { AuthProvider } from "./hooks/useAuth";
+import CookieConsent from "./components/CookieConsent";
 import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import RecipeBooklet from "./pages/RecipeBooklet";
@@ -15,6 +16,10 @@ import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminDishes from "./pages/admin/AdminDishes";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +30,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <CookieConsent />
         <BrowserRouter>
           <Routes>
             {/* Auth Routes */}
@@ -43,6 +49,12 @@ const App = () => (
             <Route path="/" element={<Layout><Landing /></Layout>} />
             <Route path="/generate" element={<Layout><Index /></Layout>} />
             <Route path="/recipe-booklet" element={<Layout><RecipeBooklet /></Layout>} />
+            
+            {/* Legal & Info Pages */}
+            <Route path="/privacy" element={<Layout><PrivacyPolicy /></Layout>} />
+            <Route path="/terms" element={<Layout><TermsOfService /></Layout>} />
+            <Route path="/contact" element={<Layout><Contact /></Layout>} />
+            <Route path="/about" element={<Layout><About /></Layout>} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
