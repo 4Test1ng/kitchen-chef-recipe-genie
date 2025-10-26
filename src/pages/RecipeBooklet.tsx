@@ -282,14 +282,14 @@ const RecipeBooklet = () => {
                     
                     <CardContent className="space-y-4">
                       <div>
-                        <h4 className="font-semibold text-sm mb-2 text-accent">Ingredients:</h4>
+                        <h4 className="font-semibold text-sm mb-2 text-primary">Ingredients:</h4>
                         <p className="text-sm text-muted-foreground leading-relaxed">{recipe.ingredients}</p>
                       </div>
                       
                       <Separator />
                       
                       <div>
-                        <h4 className="font-semibold text-sm mb-2 text-accent">Recipe:</h4>
+                        <h4 className="font-semibold text-sm mb-2 text-primary">Recipe:</h4>
                         <p className="text-sm text-muted-foreground leading-relaxed">{recipe.recipe}</p>
                       </div>
                     </CardContent>
